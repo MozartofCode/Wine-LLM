@@ -1,5 +1,8 @@
 # dependencies
 node_modules/
+API/wine_embeddings.npy
+
+
 
 # next.js
 /.next/
