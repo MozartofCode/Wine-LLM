@@ -34,7 +34,7 @@ export function Chat() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeModels, setActiveModels] = useState<ModelType[]>(["groq", "openai", "rag"])
+  const [activeModels, setActiveModels] = useState<ModelType[]>(["llama", "openai", "rag"])
   const [compareMode, setCompareMode] = useState(true)
   const [lastUserQuery, setLastUserQuery] = useState<string | null>(null)
   const [modelResponses, setModelResponses] = useState<{

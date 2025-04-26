@@ -3,15 +3,14 @@ from flask_cors import CORS
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-import time
-from custom_rag import get_rag_response
+from custom_rag import VectorDB, get_embeddings
 
 # Load environment variables
 load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app) 
 
 # Configure OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -19,6 +18,11 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # Configure Groq (if using their Python client)
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
+
+# This function handles the user's chat with the LLM
+# :param: messages - messages from the user
+# :param: model - the user's choice of model
+# :return: response to the user's message
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
@@ -51,8 +55,12 @@ def chat():
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+
+# This function handles the openAI API response
+# :param: messages - user's query
+# :param: system_prompt - the system_prompt (background)
+# :return: The wine recommendation
 def handle_openai_request(messages, system_prompt):
-    """Handle request to OpenAI API"""
 
     try:        
         response = client.chat.completions.create(
@@ -69,8 +77,13 @@ def handle_openai_request(messages, system_prompt):
         return f"Error getting response from OpenAI: {str(e)}"
 
 
+# This function handles the Llama (thru Groq API) response
+# :param: messages - user's query
+# :param: system_prompt - the system_prompt (background)
+# :return: The wine recommendation
 def handle_groq_request(messages, system_prompt):
-    """Handle request to Groq API"""
+    
+
     try:
         # If using the Groq Python client
         import groq
@@ -116,24 +129,50 @@ def handle_groq_request(messages, system_prompt):
         else:
             return f"Error from Groq API: {response.text}"
 
+
+# This function handles requests to our custom RAG model
+# :param: query - The user's query
+# :param: previous_message - user's previous messages
+# :return: The rag response for possible wines
 def handle_rag_request(query, previous_messages):
-    """Handle request to custom RAG model"""
-    # This calls your custom RAG implementation from the imported module
-    return get_rag_response(query, previous_messages)
 
+    vector_db = VectorDB('wine_embeddings.npy', 'wine_metadata.csv')
+    
+    try:
+        # 1. Get real embeddings for the query
+        query_embedding = get_embeddings(query)
+
+        # 2. Search for relevant wines
+        relevant_wines = vector_db.search(query_embedding, top_k=3)
+
+        # 3. Build a natural language response
+        response = "Here are some wines you might enjoy:\n\n"
+        for _, wine in relevant_wines.iterrows():
+            response += f"- {wine['title']} ({wine['country']}): {wine['description']} | Points: {wine['points']}, Price: ${wine['price']}\n\n"
+        
+        return response.strip()
+    
+    except Exception as e:
+        print(f"Error in RAG response generation: {str(e)}")
+        return "Sorry, I encountered an error while fetching wine recommendations."
+
+
+# This function returns the system prompt for wine recommendations
+# :param: None
+# :return: System prompt
 def get_wine_prompt():
-    """Return the system prompt for wine recommendations"""
-    return """You are a knowledgeable wine sommelier assistant. Your expertise includes:
-- Wine varieties, regions, and vintages
-- Food and wine pairings
-- Wine tasting notes and characteristics
-- Wine recommendations based on preferences, occasions, and budget
-- Wine storage and serving suggestions
 
-Provide detailed, helpful recommendations with specific wine names when possible.
-Keep responses concise but informative, focusing on 2-4 wine suggestions when making recommendations.
-If asked about non-wine topics, politely redirect the conversation back to wine.
-"""
+    return """You are a knowledgeable wine sommelier assistant. Your expertise includes:
+        - Wine varieties, regions, and vintages
+        - Food and wine pairings
+        - Wine tasting notes and characteristics
+        - Wine recommendations based on preferences, occasions, and budget
+        - Wine storage and serving suggestions
+
+        Provide detailed, helpful recommendations with specific wine names when possible.
+        Keep responses concise but informative, focusing on 2-4 wine suggestions when making recommendations.
+        If asked about non-wine topics, politely redirect the conversation back to wine.
+     """
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

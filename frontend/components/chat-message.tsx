@@ -31,7 +31,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
     if (!message.model) return null
 
     const labels: Record<ModelType, string> = {
-      groq: "Llama",
+      llama: "Llama",
       openai: "OpenAI",
       rag: "Custom RAG",
     }

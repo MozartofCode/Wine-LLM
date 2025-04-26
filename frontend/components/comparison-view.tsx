@@ -17,7 +17,7 @@ export function ComparisonView({ responses, onSelect }: ComparisonViewProps) {
   const [activeTab, setActiveTab] = useState<ModelType>(Object.keys(responses)[0] as ModelType)
 
   const modelLabels: Record<ModelType, string> = {
-    groq: "Llama (Groq)",
+    llama: "Llama",
     openai: "OpenAI",
     rag: "Custom RAG",
   }

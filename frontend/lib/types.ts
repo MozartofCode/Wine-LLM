@@ -1,1 +1,1 @@
-export type ModelType = "groq" | "openai" | "rag"
+export type ModelType = "llama" | "openai" | "rag"

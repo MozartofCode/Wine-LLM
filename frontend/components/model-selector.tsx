@@ -40,10 +40,10 @@ export function ModelSelector({ activeModels, setActiveModels, compareMode, setC
 
       <div className="flex flex-wrap gap-3">
         <ModelToggle
-          model="groq"
-          label="Llama (Groq)"
-          active={activeModels.includes("groq")}
-          onToggle={() => toggleModel("groq")}
+          model="llama"
+          label="Llama"
+          active={activeModels.includes("llama")}
+          onToggle={() => toggleModel("llama")}
         />
         <ModelToggle
           model="openai"
