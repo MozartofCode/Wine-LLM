@@ -1,9 +1,22 @@
+
+# Core dependencies
+numpy>=1.23.0
+pandas>=1.5.0
+faiss-cpu>=1.7.4
 flask==2.3.3
 flask-cors==4.0.0
 openai==1.3.0
 python-dotenv==1.0.0
-numpy==1.24.3
 requests==2.31.0
-numpy>=1.23.0
-faiss-cpu>=1.7.4
-sentence-transformers>=2.2.2
+
+# Sentence embedding
+sentence-transformers==2.2.2
+
+# Huggingface Hub compatibility
+huggingface-hub==0.10.1
+
+# Transformers compatibility (to avoid TensorFlow/Keras issues)
+transformers==4.26.1
+
+# Kaggle dataset loader (for your initial wine CSVs)
+kagglehub>=0.3.11
