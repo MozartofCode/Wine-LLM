@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
-import os
 from dotenv import load_dotenv
 from custom_rag import VectorDB, get_embeddings
+import os
 
 # Load environment variables
 load_dotenv()
@@ -28,7 +28,7 @@ def chat():
     try:
         data = request.json
         messages = data.get('messages', [])
-        model_type = data.get('model', 'groq')
+        model_type = data.get('model', 'llama')
         
         # Extract the latest message and previous conversation
         latest_message = messages[-1]['content'] if messages else ""
@@ -40,9 +40,9 @@ def chat():
         if model_type == "openai":
             # Handle OpenAI request
             response = handle_openai_request(messages, system_prompt)
-        elif model_type == "groq":
+        elif model_type == "llama":
             # Handle Groq request
-            response = handle_groq_request(messages, system_prompt)
+            response = handle_llama_request(messages, system_prompt)
         elif model_type == "rag":
             # Handle custom RAG model request
             response = handle_rag_request(latest_message, previous_messages)
@@ -81,9 +81,8 @@ def handle_openai_request(messages, system_prompt):
 # :param: messages - user's query
 # :param: system_prompt - the system_prompt (background)
 # :return: The wine recommendation
-def handle_groq_request(messages, system_prompt):
+def handle_llama_request(messages, system_prompt):
     
-
     try:
         # If using the Groq Python client
         import groq
