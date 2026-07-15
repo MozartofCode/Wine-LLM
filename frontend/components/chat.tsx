@@ -7,12 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChatMessage } from "@/components/chat-message"
 import { Send, Loader2 } from "lucide-react"
-import { ModelSelector } from "@/components/model-selector"
-import { ComparisonView } from "@/components/comparison-view"
-import type { ModelType } from "@/lib/types"
-
-// Flask backend URL - use environment variable or default to localhost
-const FLASK_API_URL = "http://localhost:5001"
+import type { Wine, ChatApiResponse } from "@/lib/types"
+import { API_URL } from "@/lib/api"
+import { useAuth } from "@/lib/auth-context"
 
 export function Chat() {
   const [messages, setMessages] = useState<
@@ -20,7 +17,7 @@ export function Chat() {
       id: string
       role: "user" | "assistant"
       content: string
-      model?: ModelType
+      wines?: Wine[]
     }[]
   >([
     {
@@ -34,12 +31,7 @@ export function Chat() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeModels, setActiveModels] = useState<ModelType[]>(["llama", "openai", "rag"])
-  const [compareMode, setCompareMode] = useState(true)
-  const [lastUserQuery, setLastUserQuery] = useState<string | null>(null)
-  const [modelResponses, setModelResponses] = useState<{
-    [key in ModelType]?: string
-  }>({})
+  const { session } = useAuth()
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -71,97 +63,39 @@ export function Chat() {
     }
 
     setMessages((prev) => [...prev, userMessage])
-    setLastUserQuery(input)
     setInput("")
     setIsLoading(true)
     setError(null)
-    setModelResponses({})
 
     try {
-      // If compare mode is on, fetch responses from all active models
-      if (compareMode) {
-        const responses = await Promise.all(
-          activeModels.map(async (model) => {
-            try {
-              const response = await fetch(`${FLASK_API_URL}/api/chat`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  messages: [...messages, userMessage],
-                  model,
-                }),
-              })
+      const response = await fetch(`${API_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [...messages, userMessage],
+          access_token: session?.access_token,
+        }),
+      })
 
-              if (!response.ok) {
-                throw new Error(`${model} API error: ${response.statusText}`)
-              }
-
-              const data = await response.json()
-              return { model, content: data.text }
-            } catch (err) {
-              console.error(`Error with ${model}:`, err)
-              return { model, content: `Error getting response from ${model}` }
-            }
-          }),
-        )
-
-        const newResponses = responses.reduce(
-          (acc, { model, content }) => {
-            acc[model] = content
-            return acc
-          },
-          {} as Record<ModelType, string>,
-        )
-
-        setModelResponses(newResponses)
-      } else {
-        // If compare mode is off, only fetch from the first active model
-        const model = activeModels[0]
-        const response = await fetch(`${FLASK_API_URL}/api/chat`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: [...messages, userMessage],
-            model,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.statusText}`)
-        }
-
-        const data = await response.json()
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: "assistant",
-            content: data.text,
-            model,
-          },
-        ])
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`)
       }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
-  const handleSelectSingleResponse = (model: ModelType) => {
-    if (modelResponses[model]) {
+      const data: ChatApiResponse = await response.json()
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
           role: "assistant",
-          content: modelResponses[model] || "",
-          model,
+          content: data.text,
+          wines: data.wines,
         },
       ])
-      setModelResponses({})
-      setLastUserQuery(null)
+    } catch (err: any) {
+      setError(err.message || "Something went wrong. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -171,15 +105,6 @@ export function Chat() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-200px)] max-h-[800px]">
-      <div className="mb-4 p-4 bg-white rounded-lg border border-rose-200 shadow-sm">
-        <ModelSelector
-          activeModels={activeModels}
-          setActiveModels={setActiveModels}
-          compareMode={compareMode}
-          setCompareMode={setCompareMode}
-        />
-      </div>
-
       <div className="flex-1 overflow-y-auto p-4 rounded-lg bg-white border border-rose-200 shadow-sm mb-4">
         <div className="space-y-4">
           {messages.map((message) => (
@@ -189,15 +114,11 @@ export function Chat() {
           {isLoading && (
             <div className="flex items-center justify-center p-4">
               <Loader2 className="h-6 w-6 animate-spin text-rose-700" />
-              <span className="ml-2 text-rose-700">Getting responses...</span>
+              <span className="ml-2 text-rose-700">Getting a recommendation...</span>
             </div>
           )}
 
           {error && <div className="p-4 bg-red-50 text-red-800 rounded-lg">Error: {error}</div>}
-
-          {lastUserQuery && Object.keys(modelResponses).length > 0 && (
-            <ComparisonView responses={modelResponses} onSelect={handleSelectSingleResponse} />
-          )}
 
           <div ref={messagesEndRef} />
         </div>

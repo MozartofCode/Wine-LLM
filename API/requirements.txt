@@ -1,0 +1,16 @@
+# Core dependencies
+numpy>=1.23.0
+pandas>=1.5.0
+flask==2.3.3
+flask-cors==4.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+
+# Groq (chat/generation) — free, OpenAI-compatible LLM API
+groq>=0.11.0
+
+# OpenAI is used solely as the embeddings provider (Groq has no embeddings API)
+openai>=1.3.0
+
+# Vector store / database
+supabase>=2.9.0

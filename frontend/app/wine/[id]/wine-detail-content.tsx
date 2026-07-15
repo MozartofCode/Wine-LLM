@@ -1,0 +1,76 @@
+"use client"
+
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { WineCard } from "@/components/wine-card"
+import { ShareButton } from "@/components/share-button"
+import type { Wine } from "@/lib/types"
+import { ArrowLeft, ExternalLink } from "lucide-react"
+
+interface WineDetailContentProps {
+  wine: Wine
+  similar: Wine[]
+}
+
+export function WineDetailContent({ wine, similar }: WineDetailContentProps) {
+  const searchUrl = `https://www.wine-searcher.com/find/${encodeURIComponent(wine.title)}`
+
+  return (
+    <>
+      <Link href="/explore" className="inline-flex items-center gap-1 text-rose-700 hover:text-rose-900 text-sm mb-4">
+        <ArrowLeft className="h-4 w-4" /> Back to Wine Finder
+      </Link>
+
+      <div className="bg-white rounded-lg border border-rose-200 shadow-sm p-6">
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-2xl font-bold text-rose-900">{wine.title}</h1>
+          {wine.points != null && (
+            <Badge variant="secondary" className="shrink-0 bg-rose-100 text-rose-800 text-base">
+              {wine.points} pts
+            </Badge>
+          )}
+        </div>
+
+        <p className="text-rose-700 mt-2">
+          {wine.variety || "Wine"}
+          {wine.winery ? ` · ${wine.winery}` : ""}
+          {wine.price != null ? ` · $${wine.price.toFixed(0)}` : ""}
+        </p>
+
+        <p className="text-sm text-gray-500 mt-1">
+          {[wine.region_1, wine.province, wine.country].filter(Boolean).join(", ")}
+        </p>
+
+        <p className="mt-4 text-gray-700 leading-relaxed">{wine.description}</p>
+
+        {wine.taster_name && <p className="mt-4 text-sm text-gray-500">Tasting note by {wine.taster_name}</p>}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild className="bg-rose-700 hover:bg-rose-800">
+            <Link href="/">Ask the sommelier about this wine</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <a href={searchUrl} target="_blank" rel="noopener noreferrer">
+              Find where to buy <ExternalLink className="h-4 w-4 ml-1" />
+            </a>
+          </Button>
+          <ShareButton title={wine.title} text={`Check out this wine: ${wine.title}`} />
+        </div>
+      </div>
+
+      {similar.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-rose-900 mb-3">Similar wines</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {similar.map((w) => (
+              <Link key={w.id} href={`/wine/${w.id}`}>
+                <WineCard wine={w} />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
