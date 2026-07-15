@@ -12,12 +12,12 @@ async function fetchWine(id: string) {
   return data.wine
 }
 
-export default async function Image({ params }: { params: { id: string } }) {
-  const wine = await fetchWine(params.id).catch(() => null)
+export default async function Image({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const wine = await fetchWine(id).catch(() => null)
 
   const subtitle = wine
     ? [wine.variety, wine.country].filter(Boolean).join(" · ") +
-      (wine.points != null ? ` · ${wine.points} pts` : "") +
       (wine.price != null ? ` · $${Math.round(wine.price)}` : "")
     : ""
 
@@ -36,7 +36,7 @@ export default async function Image({ params }: { params: { id: string } }) {
       >
         <div style={{ fontSize: 56 }}>🍷</div>
         <div style={{ fontSize: 56, fontWeight: 700, color: "#881337", marginTop: 24, lineHeight: 1.2 }}>
-          {wine?.title || "Wine Sommelier"}
+          {wine?.title || "Pour Decisions"}
         </div>
         {subtitle && <div style={{ fontSize: 32, color: "#be123c", marginTop: 24 }}>{subtitle}</div>}
         <div style={{ fontSize: 24, color: "#9f1239", marginTop: 48 }}>Recommended by your AI sommelier</div>

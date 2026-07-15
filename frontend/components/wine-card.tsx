@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Heart } from "lucide-react"
 import type { Wine } from "@/lib/types"
@@ -34,14 +33,7 @@ export function WineCard({ wine }: WineCardProps) {
   return (
     <Card className="border-rose-200">
       <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <h4 className="font-semibold text-rose-900 leading-snug">{wine.title}</h4>
-          {wine.points != null && (
-            <Badge variant="secondary" className="shrink-0 bg-rose-100 text-rose-800">
-              {wine.points} pts
-            </Badge>
-          )}
-        </div>
+        <h4 className="font-semibold text-rose-900 leading-snug">{wine.title}</h4>
         <p className="text-sm text-rose-700">
           {wine.variety || "Wine"}
           {region ? ` · ${region}` : ""}

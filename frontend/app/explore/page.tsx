@@ -76,7 +76,7 @@ export default function ExplorePage() {
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-rose-900">Wine Finder</h1>
+          <h1 className="text-2xl font-bold text-rose-900">Find Your Favorite Wine</h1>
           <p className="text-rose-700 mt-1">Browse and filter {total.toLocaleString()} wines</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 p-4 bg-white rounded-lg border border-rose-200 shadow-sm">

@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { WineCard } from "@/components/wine-card"
 import { ShareButton } from "@/components/share-button"
@@ -19,18 +18,11 @@ export function WineDetailContent({ wine, similar }: WineDetailContentProps) {
   return (
     <>
       <Link href="/explore" className="inline-flex items-center gap-1 text-rose-700 hover:text-rose-900 text-sm mb-4">
-        <ArrowLeft className="h-4 w-4" /> Back to Wine Finder
+        <ArrowLeft className="h-4 w-4" /> Back to Explore All Wines
       </Link>
 
       <div className="bg-white rounded-lg border border-rose-200 shadow-sm p-6">
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-bold text-rose-900">{wine.title}</h1>
-          {wine.points != null && (
-            <Badge variant="secondary" className="shrink-0 bg-rose-100 text-rose-800 text-base">
-              {wine.points} pts
-            </Badge>
-          )}
-        </div>
+        <h1 className="text-2xl font-bold text-rose-900">{wine.title}</h1>
 
         <p className="text-rose-700 mt-2">
           {wine.variety || "Wine"}

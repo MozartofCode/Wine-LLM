@@ -5,7 +5,7 @@ import { WineDetailContent } from "./wine-detail-content"
 import { API_URL } from "@/lib/api"
 
 interface WineDetailPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 async function fetchWine(id: string) {
@@ -16,21 +16,23 @@ async function fetchWine(id: string) {
 }
 
 export async function generateMetadata({ params }: WineDetailPageProps): Promise<Metadata> {
-  const data = await fetchWine(params.id).catch(() => null)
-  if (!data?.wine) return { title: "Wine not found — Wine Sommelier" }
+  const { id } = await params
+  const data = await fetchWine(id).catch(() => null)
+  if (!data?.wine) return { title: "Wine not found — Pour Decisions" }
 
   const { wine } = data
   const description = wine.description ? wine.description.slice(0, 160) : undefined
 
   return {
-    title: `${wine.title} — Wine Sommelier`,
+    title: `${wine.title} — Pour Decisions`,
     description,
     openGraph: { title: wine.title, description },
   }
 }
 
 export default async function WineDetailPage({ params }: WineDetailPageProps) {
-  const data = await fetchWine(params.id).catch(() => null)
+  const { id } = await params
+  const data = await fetchWine(id).catch(() => null)
   if (!data) notFound()
 
   return (
