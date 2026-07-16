@@ -39,7 +39,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           {wine?.title || "Pour Decisions"}
         </div>
         {subtitle && <div style={{ fontSize: 32, color: "#be123c", marginTop: 24 }}>{subtitle}</div>}
-        <div style={{ fontSize: 24, color: "#9f1239", marginTop: 48 }}>Recommended by your AI sommelier</div>
+        <div style={{ fontSize: 24, color: "#9f1239", marginTop: 48 }}>Recommended by your sommelier</div>
       </div>
     ),
     { ...size },

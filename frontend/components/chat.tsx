@@ -3,13 +3,13 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChatMessage } from "@/components/chat-message"
-import { Send, Wine as WineIcon, AlertCircle } from "lucide-react"
+import { Send, AlertCircle } from "lucide-react"
 import type { Wine, ChatApiResponse } from "@/lib/types"
 import { API_URL } from "@/lib/api"
-import { useAuth } from "@/lib/auth-context"
 
 const WELCOME_MESSAGE = {
   id: "welcome",
@@ -27,10 +27,10 @@ const SUGGESTIONS = [
 
 function TypingIndicator() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-rose-50 w-fit">
-      <span className="h-2 w-2 rounded-full bg-rose-400 animate-bounce [animation-delay:-0.3s]" />
-      <span className="h-2 w-2 rounded-full bg-rose-400 animate-bounce [animation-delay:-0.15s]" />
-      <span className="h-2 w-2 rounded-full bg-rose-400 animate-bounce" />
+    <div className="flex items-center gap-1 py-1">
+      <span className="h-2 w-2 rounded-full bg-rose-300 animate-bounce [animation-delay:-0.3s]" />
+      <span className="h-2 w-2 rounded-full bg-rose-300 animate-bounce [animation-delay:-0.15s]" />
+      <span className="h-2 w-2 rounded-full bg-rose-300 animate-bounce" />
     </div>
   )
 }
@@ -48,15 +48,25 @@ export function Chat() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { session } = useAuth()
+  const searchParams = useSearchParams()
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const hasAutoSentRef = useRef(false)
 
   useEffect(() => {
     setIsMounted(true)
-    inputRef.current?.focus()
+    const prompt = searchParams.get("prompt")
+    if (prompt) {
+      if (!hasAutoSentRef.current) {
+        hasAutoSentRef.current = true
+        sendMessage(prompt)
+      }
+    } else {
+      inputRef.current?.focus()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -89,7 +99,6 @@ export function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [...messages, userMessage],
-          access_token: session?.access_token,
         }),
       })
 
@@ -128,25 +137,15 @@ export function Chat() {
   const showSuggestions = messages.length === 1
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-h-[800px]">
-      <div className="flex-1 overflow-y-auto rounded-2xl bg-white border border-rose-200 shadow-sm mb-4">
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-rose-100 bg-rose-50/50 rounded-t-2xl">
-          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-rose-600 text-white shrink-0">
-            <WineIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="font-semibold text-rose-900 leading-tight">Your AI Sommelier</p>
-            <p className="text-xs text-rose-600">Grounded recommendations from real wine reviews</p>
-          </div>
-        </div>
-
-        <div className="p-4 space-y-4">
+    <div className="flex h-full flex-col bg-white">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
 
           {showSuggestions && (
-            <div className="flex flex-wrap gap-2 pl-12">
+            <div className="flex flex-wrap gap-2">
               {SUGGESTIONS.map((suggestion) => (
                 <button
                   key={suggestion}
@@ -160,17 +159,10 @@ export function Chat() {
             </div>
           )}
 
-          {isLoading && (
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 text-rose-700 shrink-0">
-                <WineIcon className="h-5 w-5" />
-              </div>
-              <TypingIndicator />
-            </div>
-          )}
+          {isLoading && <TypingIndicator />}
 
           {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 text-red-800 text-sm">
+            <div className="flex items-center gap-2 text-sm text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
               {error}
             </div>
@@ -180,25 +172,30 @@ export function Chat() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 items-center bg-white rounded-full border border-rose-200 shadow-sm p-1.5 focus-within:ring-2 focus-within:ring-rose-300">
-        <Input
-          ref={inputRef}
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Ask about wine recommendations..."
-          className="flex-1 border-none shadow-none rounded-full focus-visible:ring-0 focus-visible:ring-offset-0"
-          disabled={isLoading}
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={isLoading || !input.trim()}
-          className="rounded-full bg-rose-700 hover:bg-rose-800 shrink-0"
+      <div className="border-t border-rose-100 px-4 py-4">
+        <form
+          onSubmit={handleSubmit}
+          className="mx-auto flex max-w-3xl items-center gap-2 rounded-full border border-rose-200 bg-white shadow-sm p-1.5 focus-within:ring-2 focus-within:ring-rose-300"
         >
-          <Send className="h-4 w-4" />
-          <span className="sr-only">Send</span>
-        </Button>
-      </form>
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Ask about wine recommendations..."
+            className="flex-1 border-none shadow-none rounded-full focus-visible:ring-0 focus-visible:ring-offset-0"
+            disabled={isLoading}
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={isLoading || !input.trim()}
+            className="rounded-full bg-rose-700 hover:bg-rose-800 shrink-0"
+          >
+            <Send className="h-4 w-4" />
+            <span className="sr-only">Send</span>
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }

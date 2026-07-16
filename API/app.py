@@ -5,10 +5,8 @@ load_dotenv()
 from flask import Flask, jsonify, request  # noqa: E402
 from flask_cors import CORS  # noqa: E402
 
-from db.auth import get_user_id_from_token  # noqa: E402
 from rag.generator import generate_recommendation  # noqa: E402
 from rag.retriever import get_filter_options, get_similar_wines, get_wine, list_wines, search_wines  # noqa: E402
-from rag.taste_profile import get_taste_profile_summary  # noqa: E402
 
 app = Flask(__name__)
 CORS(app)
@@ -26,11 +24,8 @@ def chat():
         latest_message = messages[-1].get("content", "")
         previous_messages = messages[:-1]
 
-        user_id = get_user_id_from_token(data.get("access_token", ""))
-        taste_profile = get_taste_profile_summary(user_id) if user_id else None
-
         wines = search_wines(latest_message)
-        text = generate_recommendation(latest_message, previous_messages, wines, taste_profile)
+        text = generate_recommendation(latest_message, previous_messages, wines)
         return jsonify({"text": text, "wines": wines})
 
     except Exception as e:

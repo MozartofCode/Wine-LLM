@@ -33,12 +33,9 @@ def format_context(wines: list[dict]) -> str:
     return "\n\n".join(lines)
 
 
-def build_system_prompt(wines: list[dict], taste_profile: str | None = None) -> str:
+def build_system_prompt(wines: list[dict]) -> str:
     context_block = f"Retrieved wines:\n\n{format_context(wines)}\n\n{GROUNDING_INSTRUCTIONS}"
-    parts = [SYSTEM_PROMPT, context_block]
-    if taste_profile:
-        parts.append(taste_profile)
-    return "\n\n".join(parts)
+    return "\n\n".join([SYSTEM_PROMPT, context_block])
 
 
 def build_conversation_messages(user_query: str, previous_messages: list[dict]) -> list[dict]:

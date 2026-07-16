@@ -1,60 +1,44 @@
-"use client"
-
-import { useState } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Heart } from "lucide-react"
 import type { Wine } from "@/lib/types"
-import { useAuth } from "@/lib/auth-context"
-import { supabase } from "@/lib/supabase"
+import { getWineVisual } from "@/lib/wine-visual"
+import { shortWineTitle } from "@/lib/wine-format"
 
 interface WineCardProps {
   wine: Wine
 }
 
 export function WineCard({ wine }: WineCardProps) {
-  const { user } = useAuth()
-  const [saved, setSaved] = useState(false)
-  const [saving, setSaving] = useState(false)
   const region = [wine.region_1, wine.province, wine.country].filter(Boolean).join(", ")
-
-  const handleSave = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!user || saving) return
-    setSaving(true)
-    const { error } = await supabase
-      .from("saved_wines")
-      .upsert({ user_id: user.id, wine_id: wine.id }, { onConflict: "user_id,wine_id", ignoreDuplicates: true })
-    setSaving(false)
-    if (!error) setSaved(true)
-  }
+  const visual = getWineVisual(wine.variety)
 
   return (
-    <Card className="border-rose-200">
+    <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border-rose-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-lg">
       <CardHeader className="pb-2">
-        <h4 className="font-semibold text-rose-900 leading-snug">{wine.title}</h4>
-        <p className="text-sm text-rose-700">
-          {wine.variety || "Wine"}
-          {region ? ` · ${region}` : ""}
-          {wine.price != null ? ` · $${wine.price.toFixed(0)}` : ""}
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg ${visual.bg}`}>
+            {visual.emoji}
+          </div>
+          {wine.price != null && (
+            <span className="shrink-0 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
+              ${wine.price.toFixed(0)}
+            </span>
+          )}
+        </div>
+        <h4
+          title={wine.title}
+          className="mt-3 text-[15px] font-semibold text-rose-950 leading-snug line-clamp-2 transition-colors group-hover:text-rose-700"
+        >
+          {shortWineTitle(wine.title)}
+        </h4>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-gray-500">
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-600">
+            {wine.variety || "Wine"}
+          </span>
+          {region && <span className="line-clamp-1">{region}</span>}
+        </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <p className="text-sm text-gray-700 line-clamp-3">{wine.description}</p>
-        {user && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleSave}
-            disabled={saving || saved}
-            className="mt-2 -ml-2 text-rose-700 hover:text-rose-900 hover:bg-rose-50"
-          >
-            <Heart className={`h-4 w-4 mr-1 ${saved ? "fill-rose-600 text-rose-600" : ""}`} />
-            {saved ? "Saved" : "Save"}
-          </Button>
-        )}
+      <CardContent className="flex flex-1 flex-col pt-0">
+        <p className="flex-1 text-sm font-normal text-gray-500 leading-relaxed line-clamp-2">{wine.description}</p>
       </CardContent>
     </Card>
   )
