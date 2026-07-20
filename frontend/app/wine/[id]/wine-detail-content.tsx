@@ -1,10 +1,12 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { WineStrip } from "@/components/wine-strip"
 import { WineVisualPanel } from "@/components/wine-visual-panel"
 import { ShareButton } from "@/components/share-button"
+import { addRecentlyViewed } from "@/lib/recently-viewed"
 import type { Wine } from "@/lib/types"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 
@@ -16,6 +18,10 @@ interface WineDetailContentProps {
 export function WineDetailContent({ wine, similar }: WineDetailContentProps) {
   const searchUrl = `https://www.wine-searcher.com/find/${encodeURIComponent(wine.title)}`
   const askPrompt = `Please tell me about ${wine.title}`
+
+  useEffect(() => {
+    addRecentlyViewed(wine.id)
+  }, [wine.id])
 
   return (
     <>
@@ -48,7 +54,7 @@ export function WineDetailContent({ wine, similar }: WineDetailContentProps) {
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button asChild className="bg-rose-700 hover:bg-rose-800">
-            <Link href={`/chat?prompt=${encodeURIComponent(askPrompt)}`}>Ask the sommelier about this wine</Link>
+            <Link href={`/chat?prompt=${encodeURIComponent(askPrompt)}`}>Learn more about this wine</Link>
           </Button>
           <Button asChild variant="outline">
             <a href={searchUrl} target="_blank" rel="noopener noreferrer">

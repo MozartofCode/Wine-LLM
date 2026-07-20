@@ -130,18 +130,27 @@ export function Chat() {
     sendMessage(input)
   }
 
+  const refine = (instruction: string) => sendMessage(instruction)
+
   if (!isMounted) {
     return null
   }
 
   const showSuggestions = messages.length === 1
+  const latestWineMessageId = messages.filter((m) => m.role === "assistant" && m.wines?.length).at(-1)?.id
 
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6">
           {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
+            <ChatMessage
+              key={message.id}
+              message={message}
+              onRefine={refine}
+              showRefineChips={message.id === latestWineMessageId}
+              isLoading={isLoading}
+            />
           ))}
 
           {showSuggestions && (

@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { MessageCircle, Compass, Sparkles } from "lucide-react"
+import { MessageCircle, Compass, ListChecks, UtensilsCrossed, Shuffle, CalendarDays, Scale, ListPlus, Globe, BookOpen } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Button } from "@/components/ui/button"
 import { WineStrip } from "@/components/wine-strip"
+import { RecentlyViewedStrip } from "@/components/recently-viewed-strip"
 import { API_URL } from "@/lib/api"
 import type { Wine } from "@/lib/types"
 
@@ -19,26 +20,38 @@ async function getFeaturedWines(): Promise<Wine[]> {
   }
 }
 
-const STEPS = [
-  {
-    icon: MessageCircle,
-    title: "Tell us what you like",
-    description: "Describe a dish, occasion, or taste you're craving.",
-  },
-  {
-    icon: Sparkles,
-    title: "Get grounded picks",
-    description: "Recommendations pulled from real tasting notes, not guesses.",
-  },
-  {
-    icon: Compass,
-    title: "Explore anytime",
-    description: "Browse all 111,000+ wines by variety, country, and price.",
-  },
+async function getWineOfTheDay(): Promise<Wine | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/wines/of-the-day`, {
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.wine ?? null
+  } catch {
+    return null
+  }
+}
+
+const MORE_WAYS = [
+  { href: "/quiz", icon: ListChecks, label: "Take the Taste Quiz" },
+  { href: "/pair", icon: UtensilsCrossed, label: "What's for Dinner?" },
+  { href: "/surprise", icon: Shuffle, label: "Surprise Me" },
+  { href: "/compare", icon: Scale, label: "Compare Wines" },
+  { href: "/flight", icon: ListPlus, label: "Build a Wine Flight" },
+  { href: "/map", icon: Globe, label: "Explore by Country" },
+  { href: "/guide", icon: BookOpen, label: "Wine Guide" },
 ]
 
 export default async function Home() {
-  const featured = await getFeaturedWines()
+  const [featured, wineOfTheDay] = await Promise.all([getFeaturedWines(), getWineOfTheDay()])
+
+  const moreWays = [
+    ...MORE_WAYS,
+    ...(wineOfTheDay
+      ? [{ href: `/wine/${wineOfTheDay.id}`, icon: CalendarDays, label: "Wine of the Day" }]
+      : []),
+  ]
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-amber-50 to-rose-50">
@@ -89,7 +102,20 @@ export default async function Home() {
               </Button>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-rose-700/80">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+              {moreWays.map(({ href, icon: Icon, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-white/70 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-rose-700 transition-all hover:bg-white hover:text-rose-900 hover:shadow-sm"
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-rose-700/80">
               <span><span className="font-semibold text-rose-900">111,567</span> wines</span>
               <span className="text-rose-300">•</span>
               <span>Grounded in real tasting notes</span>
@@ -99,28 +125,13 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 pb-8 max-w-4xl">
-          <div className="grid gap-3 sm:grid-cols-3">
-            {STEPS.map(({ icon: Icon, title, description }) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-rose-100 bg-white/70 backdrop-blur-sm p-5 text-center shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-700">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <p className="mt-3 font-semibold text-rose-900">{title}</p>
-                <p className="mt-1 text-sm text-rose-700">{description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {featured.length > 0 && (
-          <section className="pb-12 pt-2">
+          <section className="pb-12">
             <WineStrip wines={featured} />
           </section>
         )}
+
+        <RecentlyViewedStrip />
       </main>
     </div>
   )
