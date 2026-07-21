@@ -1,9 +1,8 @@
 import Link from "next/link"
-import { MessageCircle, Compass, ListChecks, UtensilsCrossed, Shuffle, CalendarDays, Scale, ListPlus, Globe, BookOpen } from "lucide-react"
+import { MessageCircle, Compass } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Button } from "@/components/ui/button"
 import { WineStrip } from "@/components/wine-strip"
-import { RecentlyViewedStrip } from "@/components/recently-viewed-strip"
 import { API_URL } from "@/lib/api"
 import type { Wine } from "@/lib/types"
 
@@ -20,38 +19,8 @@ async function getFeaturedWines(): Promise<Wine[]> {
   }
 }
 
-async function getWineOfTheDay(): Promise<Wine | null> {
-  try {
-    const res = await fetch(`${API_URL}/api/wines/of-the-day`, {
-      next: { revalidate: 3600 },
-    })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data.wine ?? null
-  } catch {
-    return null
-  }
-}
-
-const MORE_WAYS = [
-  { href: "/quiz", icon: ListChecks, label: "Take the Taste Quiz" },
-  { href: "/pair", icon: UtensilsCrossed, label: "What's for Dinner?" },
-  { href: "/surprise", icon: Shuffle, label: "Surprise Me" },
-  { href: "/compare", icon: Scale, label: "Compare Wines" },
-  { href: "/flight", icon: ListPlus, label: "Build a Wine Flight" },
-  { href: "/map", icon: Globe, label: "Explore by Country" },
-  { href: "/guide", icon: BookOpen, label: "Wine Guide" },
-]
-
 export default async function Home() {
-  const [featured, wineOfTheDay] = await Promise.all([getFeaturedWines(), getWineOfTheDay()])
-
-  const moreWays = [
-    ...MORE_WAYS,
-    ...(wineOfTheDay
-      ? [{ href: `/wine/${wineOfTheDay.id}`, icon: CalendarDays, label: "Wine of the Day" }]
-      : []),
-  ]
+  const featured = await getFeaturedWines()
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-amber-50 to-rose-50">
@@ -68,7 +37,7 @@ export default async function Home() {
             className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-amber-300/40 blur-3xl"
           />
 
-          <div className="relative container mx-auto px-4 pt-8 pb-10 sm:pt-10 sm:pb-12 max-w-3xl text-center">
+          <div className="relative container mx-auto px-4 pt-16 pb-10 sm:pt-24 sm:pb-12 max-w-3xl text-center">
             <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-br from-rose-950 via-rose-800 to-rose-600 bg-clip-text text-transparent">
               Find your next favorite bottle
             </h1>
@@ -102,19 +71,6 @@ export default async function Home() {
               </Button>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-              {moreWays.map(({ href, icon: Icon, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-white/70 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-rose-700 transition-all hover:bg-white hover:text-rose-900 hover:shadow-sm"
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </Link>
-              ))}
-            </div>
-
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-rose-700/80">
               <span><span className="font-semibold text-rose-900">111,567</span> wines</span>
               <span className="text-rose-300">•</span>
@@ -130,8 +86,6 @@ export default async function Home() {
             <WineStrip wines={featured} />
           </section>
         )}
-
-        <RecentlyViewedStrip />
       </main>
     </div>
   )

@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import random
 import re
 from datetime import date
 
@@ -120,16 +119,6 @@ def get_wines_by_ids(ids: list[int]) -> list[dict]:
     response = client.table("wines").select(PUBLIC_COLUMNS).in_("id", ids).execute()
     by_id = {w["id"]: w for w in response.data}
     return [by_id[i] for i in ids if i in by_id]
-
-
-def get_random_wine() -> dict | None:
-    client = get_supabase_client()
-    total = client.table("wines").select("id", count="exact").limit(1).execute().count or 0
-    if total == 0:
-        return None
-    offset = random.randint(0, total - 1)
-    resp = client.table("wines").select(PUBLIC_COLUMNS).order("id").range(offset, offset).execute()
-    return resp.data[0] if resp.data else None
 
 
 def get_wine_of_the_day() -> dict | None:

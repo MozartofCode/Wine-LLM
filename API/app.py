@@ -8,7 +8,6 @@ from flask_cors import CORS  # noqa: E402
 from rag.generator import generate_recommendation  # noqa: E402
 from rag.retriever import (  # noqa: E402
     get_filter_options,
-    get_random_wine,
     get_similar_wines,
     get_wine,
     get_wine_of_the_day,
@@ -92,14 +91,6 @@ def wines_batch():
         return jsonify({"error": "ids must be a comma-separated list of integers"}), 400
     ids = ids[:5]
     return jsonify({"wines": get_wines_by_ids(ids)})
-
-
-@app.route("/api/wines/random", methods=["GET"])
-def wine_random():
-    wine = get_random_wine()
-    if wine is None:
-        return jsonify({"error": "No wines available"}), 404
-    return jsonify({"wine": wine})
 
 
 @app.route("/api/wines/of-the-day", methods=["GET"])
