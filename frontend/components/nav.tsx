@@ -38,7 +38,7 @@ export function Nav() {
           Pour Decisions
         </Link>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full bg-rose-50/70 p-1.5 lg:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full bg-rose-50/70 p-1.5 xl:flex">
           {NAV_LINKS.map(({ href, icon: Icon, label }) => (
             <Link
               key={href}
@@ -54,7 +54,7 @@ export function Nav() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex items-center justify-center rounded-full p-2.5 text-rose-700 transition-colors hover:bg-rose-50 lg:hidden"
+          className="inline-flex items-center justify-center rounded-full p-2.5 text-rose-700 transition-colors hover:bg-rose-50 xl:hidden"
           aria-label={open ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={open}
         >
@@ -63,7 +63,7 @@ export function Nav() {
       </div>
 
       {open && (
-        <nav className="border-t border-rose-100 px-4 py-3 lg:hidden">
+        <nav className="border-t border-rose-100 px-4 py-3 xl:hidden">
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
             {NAV_LINKS.map(({ href, icon: Icon, label }) => (
               <Link
