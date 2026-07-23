@@ -30,7 +30,7 @@ export function WorldMap({ countries }: WorldMapProps) {
   }, [countries])
 
   function goToCountry(country: string) {
-    router.push(`/guide/country/${encodeURIComponent(country)}`)
+    router.push(`/explore?country=${encodeURIComponent(country)}`)
   }
 
   return (

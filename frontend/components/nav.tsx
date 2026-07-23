@@ -7,9 +7,7 @@ import {
   ListChecks,
   UtensilsCrossed,
   Scale,
-  ListPlus,
   Globe,
-  BookOpen,
   CalendarDays,
   Wine,
   Menu,
@@ -21,9 +19,7 @@ const NAV_LINKS = [
   { href: "/quiz", icon: ListChecks, label: "Taste Quiz" },
   { href: "/pair", icon: UtensilsCrossed, label: "Pairing" },
   { href: "/compare", icon: Scale, label: "Compare" },
-  { href: "/flight", icon: ListPlus, label: "Flight Builder" },
   { href: "/map", icon: Globe, label: "By Country" },
-  { href: "/guide", icon: BookOpen, label: "Guide" },
   { href: "/today", icon: CalendarDays, label: "Wine of the Day" },
 ]
 

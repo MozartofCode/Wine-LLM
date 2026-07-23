@@ -1,10 +1,10 @@
 # Wine-LLM – AI-Powered Wine Recommendation System
 
-**A real Retrieval-Augmented Generation (RAG) wine sommelier: vector search over 111,567 wine reviews, grounded recommendations from Groq (Llama), and a full discovery app around it — a browsable explorer with multi-select filters, a guided taste quiz, a dish-pairing tool, wine comparison, a shareable wine-flight builder, a data-driven wine guide, a country explorer, and shareable wine pages. No account required for any of it.**
+**A real Retrieval-Augmented Generation (RAG) wine sommelier: vector search over 111,567 wine reviews, grounded recommendations from Groq (Llama), and a full discovery app around it — a browsable explorer with multi-select filters, a guided taste quiz, a dish-pairing tool, wine comparison, an interactive country map, and shareable wine pages. No account required for any of it.**
 
 ## Overview
 
-**Wine-LLM** helps users find the right wine for any occasion. A user's question is embedded and matched against a Postgres/pgvector index of the Kaggle wine-reviews dataset; the retrieved wines are passed to a Groq-hosted Llama model, which recommends 2-4 of them and explains why — grounded in real data, not invented. Beyond chat, the app gives people several low-effort ways to land on a good bottle: a guided quiz for people who don't know what to ask, a dish-first pairing tool, a comparison table, a shareable tasting-flight builder, and a data-driven guide/map for browsing by variety or country. Everything works anonymously — there's no login anywhere in the app.
+**Wine-LLM** helps users find the right wine for any occasion. A user's question is embedded and matched against a Postgres/pgvector index of the Kaggle wine-reviews dataset; the retrieved wines are passed to a Groq-hosted Llama model, which recommends 2-4 of them and explains why — grounded in real data, not invented. Beyond chat, the app gives people several low-effort ways to land on a good bottle: a guided quiz for people who don't know what to ask, a dish-first pairing tool, a comparison table, and an interactive map for browsing by country. Everything works anonymously — there's no login anywhere in the app.
 
 ## Key Features
 
@@ -19,15 +19,13 @@
 
 **Browsing & filtering**
 - **Wine Explorer** (`/explore`): browse and filter all 111K+ wines with multi-select variety and country pickers (searchable for the 697 varieties), sort by price or rating, and removable filter chips. Deep-linkable (`/explore?variety=Sangiovese&country=Italy`).
-- **Wine Guide** (`/guide`): a data-driven browse-by-variety and browse-by-country index; each variety/country page shows the real wine count and a real sample grid — no invented copy.
-- **Country Explorer** (`/map`): a flag-tile grid for browsing the catalog by country, linking into the Wine Guide.
+- **Country Explorer** (`/map`): an interactive world map — hover a country to see its name, click to jump straight into the Explorer filtered to that country.
 
 **Comparing & sharing**
 - **Wine Comparison** (`/compare`): pick 2-3 wines and see an analytical side-by-side table (price, variety, region, winery, full tasting note). State lives entirely in the URL, so the comparison is shareable and reloads exactly as left.
-- **Wine Flight Builder** (`/flight`): build a named list of 3-5 wines for a dinner or tasting and share one link — no backend storage, the whole flight (wines + name) is encoded in the URL.
 - **Shareable Wine Pages** (`/wine/[id]`): every wine has a detail page with an illustrated bottle graphic, similar-wine suggestions, a Share button (native share sheet with clipboard fallback), and a server-generated Open Graph image for rich social previews.
 
-None of the above requires an account. Where state needs to persist (a comparison, a flight), it lives entirely in the URL itself instead of a login-gated database table.
+None of the above requires an account. Where state needs to persist (a comparison), it lives entirely in the URL itself instead of a login-gated database table.
 
 ## How the RAG Pipeline & Vector Library Work
 
@@ -38,14 +36,14 @@ This is a genuine retrieval-augmented generation pipeline, not a keyword search 
 - For each wine, builds an embedding input string that folds in structured context, not just the raw tasting note: `"{variety} from {country}, {province}. {title}. {description}"`. This measurably improves recall for queries like "a bold Spanish red" versus embedding the description alone.
 - Batches these through **OpenAI's `text-embedding-3-small`**, truncated to **768 dimensions** via the API's native `dimensions` parameter (Matryoshka representation learning — this keeps the vector index compact and fast without materially hurting retrieval quality). Groq has no embeddings endpoint, so OpenAI is used solely for this step.
 - Bulk-upserts all 111,567 rows into a Postgres table (`wines`) hosted on **Supabase**, with the embedding stored in a native `vector(768)` column via the **pgvector** extension.
-- Also writes `API/rag/vocab.json` — the distinct list of varieties/countries in the dataset, used for cheap keyword-based filter extraction at query time (see below) without an extra LLM call, and to power the Explorer's filter pickers and the Wine Guide's index.
+- Also writes `API/rag/vocab.json` — the distinct list of varieties/countries in the dataset, used for cheap keyword-based filter extraction at query time (see below) without an extra LLM call, and to power the Explorer's filter pickers.
 
 **2. Query-time retrieval + generation (`API/rag/retriever.py`, `API/rag/generator.py`)** — on every chat message:
 - The user's message is embedded the same way (same model, same 768 dims) via `rag/embeddings.py`.
 - A lightweight regex/keyword pass (`extract_filters`) checks the message against the vocab list and a price-pattern regex (e.g. "under $20") to pull out optional structured filters — no LLM round-trip needed for this.
 - A single Postgres function, **`match_wines`**, runs a **hybrid query**: pgvector's `<->` (L2 distance) operator ranks all wines by embedding similarity, while any extracted `variety`/`country`/`price` filters are applied as ordinary `WHERE` clauses in the same query — semantic search and structured filtering in one round trip, not two separate systems bolted together.
 - The top matches are formatted into a numbered context block and passed to **Groq** (`llama-3.3-70b-versatile`) along with a system prompt that explicitly instructs the model to recommend **only** from the retrieved wines and to say so honestly if nothing fits — this is what makes it grounded rather than a model free-associating wine names it may have hallucinated.
-- The same retriever also powers non-chat surfaces: `list_wines()` backs the Explorer, Wine Guide, and Country Explorer (with multi-value `variety`/`country` filters and a `sort` param); `get_wines_by_ids()` powers the Comparison tool and Flight Builder via a single batch endpoint; `get_wine_of_the_day()` backs the daily pick (a date-seeded deterministic offset), using a `count()` + single-row `.range()` fetch rather than `ORDER BY random()`, which would be a full-table sort on 111K rows.
+- The same retriever also powers non-chat surfaces: `list_wines()` backs the Explorer and Country Explorer (with multi-value `variety`/`country` filters and a `sort` param); `get_wines_by_ids()` powers the Comparison tool via a batch endpoint; `get_wine_of_the_day()` backs the daily pick (a date-seeded deterministic offset), using a `count()` + single-row `.range()` fetch rather than `ORDER BY random()`, which would be a full-table sort on 111K rows.
 
 **The vector index itself** is an **IVFFlat** index (`vector_l2_ops`, `lists = 100`) rather than HNSW. This was a deliberate choice made while debugging on Supabase's free tier: HNSW graph construction on 111K × 768-dim vectors routinely exceeded the platform's statement timeout during index builds, while IVFFlat (essentially k-means clustering into buckets) builds in well under a minute with a small `maintenance_work_mem` bump. At this dataset size, IVFFlat's recall is effectively equivalent to HNSW for this use case.
 
@@ -58,7 +56,7 @@ One non-obvious bug worth documenting for anyone extending this: the first versi
 - **LLM**: Groq (`llama-3.3-70b-versatile`) for chat/generation — free tier
 - **Embeddings**: OpenAI `text-embedding-3-small`, truncated to 768 dims (Groq has no embeddings API)
 - **Vector store**: Supabase Postgres + `pgvector` (IVFFlat index, hybrid vector + structured-filter queries via a single RPC function)
-- **Client-side state**: URL query params (comparisons, flights, quiz/pairing handoffs) — no auth, no server-side sessions
+- **Client-side state**: URL query params (comparisons, quiz/pairing handoffs) — no auth, no server-side sessions
 
 ## 🛠️ Installation & Setup
 
@@ -113,9 +111,7 @@ The app runs on `http://localhost:3000`.
 - **Taste Quiz** (`/quiz`): answer 4 quick questions to get a tailored chat recommendation.
 - **What's for Dinner?** (`/pair`): get wine pairings for a dish, shown in their own results layout.
 - **Compare** (`/compare`): put 2-3 wines side by side.
-- **Flight** (`/flight`): build and share a named list of 3-5 wines.
-- **Guide** (`/guide`): browse wines by variety or country.
-- **Map** (`/map`): browse wines by country via flag tiles.
+- **Map** (`/map`): browse wines by country on an interactive world map.
 - Every wine has a detail page (`/wine/[id]`) with similar-wine suggestions, a buy-it-elsewhere search link, and a Share button.
 
 ## Future Enhancements
@@ -123,7 +119,7 @@ The app runs on `http://localhost:3000`.
 - Live pricing/availability data and real affiliate partnerships
 - Photo- or recipe-based food-pairing input
 - Cellar inventory tracking
-- A literal cartographic map (currently a flag-tile grid, to avoid a new geo dependency) with real per-country wine counts sizing each tile
+- Real per-country wine counts sizing/shading each country on the map
 
 ## Contact
 

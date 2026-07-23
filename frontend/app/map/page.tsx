@@ -43,7 +43,7 @@ export default async function MapPage() {
             {sorted.map((country) => (
               <Link
                 key={country}
-                href={`/guide/country/${encodeURIComponent(country)}`}
+                href={`/explore?country=${encodeURIComponent(country)}`}
                 className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-50 hover:text-rose-900"
               >
                 <span>{getCountryFlag(country)}</span>
