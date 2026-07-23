@@ -2,9 +2,15 @@
 
 **A real Retrieval-Augmented Generation (RAG) wine sommelier: vector search over 111,567 wine reviews, grounded recommendations from Groq (Llama), and a full discovery app around it — a browsable explorer with multi-select filters, a guided taste quiz, a dish-pairing tool, wine comparison, an interactive country map, and shareable wine pages. No account required for any of it.**
 
+## 🎥 Demo
+
+<video src="docs/demo.mp4" controls width="100%"></video>
+
+A quick walkthrough of the sommelier chat, Explorer, interactive map, and Compare tool. If the player above doesn't render, watch/download it directly: [`docs/demo.mp4`](docs/demo.mp4).
+
 ## Overview
 
-**Wine-LLM** helps users find the right wine for any occasion. A user's question is embedded and matched against a Postgres/pgvector index of the Kaggle wine-reviews dataset; the retrieved wines are passed to a Groq-hosted Llama model, which recommends 2-4 of them and explains why — grounded in real data, not invented. Beyond chat, the app gives people several low-effort ways to land on a good bottle: a guided quiz for people who don't know what to ask, a dish-first pairing tool, a comparison table, and an interactive map for browsing by country. Everything works anonymously — there's no login anywhere in the app.
+**Wine-LLM** helps users find the right wine for any occasion. A user's question is embedded and matched against a Postgres/pgvector index of the Kaggle wine-reviews dataset; the retrieved wines are passed to a Groq-hosted Llama model, which recommends 2-4 of them and explains why — grounded in real data, not invented. Beyond chat, the app gives people several low-effort ways to land on a good bottle: a guided quiz for people who don't know what to ask, a dish-first pairing tool, a side-by-side comparison tool, and an interactive map for browsing by country. Everything works anonymously — there's no login anywhere in the app.
 
 ## Key Features
 
@@ -22,7 +28,7 @@
 - **Country Explorer** (`/map`): an interactive world map — hover a country to see its name, click to jump straight into the Explorer filtered to that country.
 
 **Comparing & sharing**
-- **Wine Comparison** (`/compare`): pick 2-3 wines and see an analytical side-by-side table (price, variety, region, winery, full tasting note). State lives entirely in the URL, so the comparison is shareable and reloads exactly as left.
+- **Wine Comparison** (`/compare`): pick 2-3 wines and see them side by side in a card-based comparison grid (price, variety, region, winery, full tasting note). State lives entirely in the URL, so the comparison is shareable and reloads exactly as left.
 - **Shareable Wine Pages** (`/wine/[id]`): every wine has a detail page with an illustrated bottle graphic, similar-wine suggestions, a Share button (native share sheet with clipboard fallback), and a server-generated Open Graph image for rich social previews.
 
 None of the above requires an account. Where state needs to persist (a comparison), it lives entirely in the URL itself instead of a login-gated database table.
