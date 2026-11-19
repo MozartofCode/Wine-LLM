@@ -1,0 +1,10 @@
+[
+  {"id": "rhone", "name": "Rhône Week", "emoji": "🌿", "blurb": "Peppery Syrah in the north, generous Grenache blends in the south.", "variety": "Syrah", "country": "France", "placeTip": "Ask a wine bar for a Côtes du Rhône by the glass."},
+  {"id": "bubbles", "name": "Bubbles Week", "emoji": "🥂", "blurb": "Champagne, Cava, Crémant and beyond. Sparkling wine isn't just for celebrations.", "variety": "Sparkling Blend", "country": null, "placeTip": "Ask your wine shop for a Crémant: Champagne method, friendlier price."},
+  {"id": "italy", "name": "Italian Reds Week", "emoji": "🍅", "blurb": "Sangiovese, Nebbiolo and the food-loving acidity that makes Italian reds sing.", "variety": "Sangiovese", "country": "Italy", "placeTip": "Order a Chianti Classico with pasta at your local trattoria."},
+  {"id": "riesling", "name": "Riesling Week", "emoji": "🍏", "blurb": "Bone dry to lusciously sweet, always electric with acidity.", "variety": "Riesling", "country": null, "placeTip": "Pair an off-dry Riesling with Thai or Indian takeout."},
+  {"id": "pinot", "name": "Pinot Noir Week", "emoji": "🍒", "blurb": "The heartbreak grape: light, silky and maddeningly expressive of place.", "variety": "Pinot Noir", "country": null, "placeTip": "Compare an Oregon and a Burgundy Pinot at a wine bar flight."},
+  {"id": "spain", "name": "Spain Week", "emoji": "💃", "blurb": "Tempranillo from Rioja and Ribera, plus great-value Garnacha.", "variety": "Tempranillo", "country": "Spain", "placeTip": "Find a tapas bar and order a Rioja Crianza."},
+  {"id": "south-america", "name": "Andes Week", "emoji": "🏔️", "blurb": "High-altitude Malbec from Argentina and bright reds from Chile.", "variety": "Malbec", "country": "Argentina", "placeTip": "Grill something and open a Mendoza Malbec."},
+  {"id": "sauv-blanc", "name": "Sauvignon Blanc Week", "emoji": "🌱", "blurb": "Zesty, herbal and grassy, from Sancerre to Marlborough.", "variety": "Sauvignon Blanc", "country": null, "placeTip": "Order Sancerre with goat cheese or oysters."}
+]

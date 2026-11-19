@@ -8,6 +8,12 @@ import { getCountryFlag } from "@/lib/country-flags"
 
 interface WorldMapProps {
   countries: string[]
+  /** When set, clicking a country calls this instead of opening the Explorer. */
+  onSelect?: (country: string) => void
+  /** Optional per-country fill override (e.g. right/wrong answers in a game). */
+  fillFor?: (country: string) => string | undefined
+  /** Hide country names on hover (for quiz-style use). */
+  hideTooltip?: boolean
 }
 
 interface Hovered {
@@ -16,7 +22,7 @@ interface Hovered {
   y: number
 }
 
-export function WorldMap({ countries }: WorldMapProps) {
+export function WorldMap({ countries, onSelect, fillFor, hideTooltip = false }: WorldMapProps) {
   const router = useRouter()
   const [hovered, setHovered] = useState<Hovered | null>(null)
 
@@ -30,6 +36,10 @@ export function WorldMap({ countries }: WorldMapProps) {
   }, [countries])
 
   function goToCountry(country: string) {
+    if (onSelect) {
+      onSelect(country)
+      return
+    }
     router.push(`/explore?country=${encodeURIComponent(country)}`)
   }
 
@@ -43,6 +53,7 @@ export function WorldMap({ countries }: WorldMapProps) {
         {Object.entries(WORLD_MAP_PATHS).map(([iso, d]) => {
           const country = isoToCountry.get(iso)
           const isActive = Boolean(country)
+          const override = country ? fillFor?.(country) : undefined
 
           return (
             <path
@@ -50,9 +61,11 @@ export function WorldMap({ countries }: WorldMapProps) {
               d={d}
               tabIndex={isActive ? 0 : -1}
               role={isActive ? "button" : undefined}
-              aria-label={isActive ? `Browse wines from ${country}` : undefined}
+              aria-label={isActive ? (onSelect ? country : `Browse wines from ${country}`) : undefined}
               className={
-                isActive
+                override
+                  ? `cursor-pointer stroke-white stroke-[0.5] outline-none ${override}`
+                  : isActive
                   ? "cursor-pointer fill-rose-300 stroke-white stroke-[0.5] outline-none transition-colors duration-150 hover:fill-rose-600 focus-visible:fill-rose-600"
                   : "fill-rose-100/80 stroke-white stroke-[0.5]"
               }
@@ -77,7 +90,7 @@ export function WorldMap({ countries }: WorldMapProps) {
         })}
       </svg>
 
-      {hovered && (
+      {hovered && !hideTooltip && (
         <div
           className="pointer-events-none fixed z-30 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-full bg-rose-900 px-3 py-1.5 text-xs font-medium text-white shadow-lg"
           style={{ left: hovered.x, top: hovered.y - 12 }}

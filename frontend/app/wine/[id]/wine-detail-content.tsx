@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { WineStrip } from "@/components/wine-strip"
 import { WineVisualPanel } from "@/components/wine-visual-panel"
 import { ShareButton } from "@/components/share-button"
+import { WineLearnLinks } from "@/components/wine-learn-links"
 import type { Wine } from "@/lib/types"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 
@@ -57,6 +58,8 @@ export function WineDetailContent({ wine, similar }: WineDetailContentProps) {
           </Button>
           <ShareButton title={wine.title} text={`Check out this wine: ${wine.title}`} />
         </div>
+
+        <WineLearnLinks wine={wine} />
       </div>
 
       {similar.length > 0 && (

@@ -1,0 +1,26 @@
+{
+  "dated": {
+    "01-17": {"year": 1920, "title": "Prohibition begins in the U.S.", "body": "National Prohibition took effect, outlawing the sale of alcohol. Some wineries survived by making sacramental wine, grape juice and \"grape bricks\" sold with a warning not to let them ferment."},
+    "04-13": {"year": 1743, "title": "Thomas Jefferson is born", "body": "America's third president was its first great wine collector. He toured the vineyards of France and Italy and spent years trying, and failing, to grow European grapes at Monticello."},
+    "04-17": {"year": 1853, "title": "Malbec World Day", "body": "Argentina celebrates Malbec on the anniversary of the 1853 project, backed by Domingo Sarmiento, to bring French vines and expertise to Mendoza. Malbec became the country's signature grape."},
+    "04-18": {"year": 1855, "title": "The 1855 Bordeaux Classification", "body": "For the Paris Exposition, Bordeaux brokers ranked the region's top red wines into five \"growths\" based on price and reputation. It has changed only twice since, most famously when Château Mouton Rothschild was promoted in 1973."},
+    "05-24": {"year": 1976, "title": "The Judgment of Paris", "body": "In a blind tasting in Paris, top French judges ranked a California Chardonnay (Chateau Montelena) and a California Cabernet (Stag's Leap Wine Cellars) above famous French wines. It put Napa on the world map."},
+    "07-04": {"year": 2015, "title": "Champagne and Burgundy join UNESCO", "body": "The hillsides, houses and cellars of Champagne and the \"climats\" (named vineyard plots) of Burgundy were both added to the UNESCO World Heritage list on the same day."},
+    "07-30": {"year": 1935, "title": "France creates the AOC system", "body": "A French decree-law created the system of controlled place names (appellations d'origine contrôlée) and the body to run it. It became the model for wine laws across Europe."},
+    "09-14": {"year": 1715, "title": "Dom Pérignon dies", "body": "The Benedictine monk at Hautvillers is often credited with inventing Champagne. He didn't, and he probably never said \"Come quickly, I am tasting the stars!\". But he was a brilliant blender who raised the region's quality."},
+    "12-05": {"year": 1933, "title": "Prohibition ends", "body": "The 21st Amendment was ratified, ending Prohibition in the United States. The American wine industry spent decades rebuilding."},
+    "12-27": {"year": 1822, "title": "Louis Pasteur is born", "body": "Pasteur showed that yeast causes fermentation and that microbes make wine spoil. His 1866 study of wine helped turn winemaking from guesswork into science."}
+  },
+  "anytime": [
+    {"year": -6000, "title": "The oldest wine we know of", "body": "Chemical traces in pottery jars from Georgia in the South Caucasus show people were making grape wine around 6000 BC. Georgians still ferment wine in buried clay qvevri today."},
+    {"year": -4000, "title": "The world's oldest winery", "body": "In a cave called Areni-1 in Armenia, archaeologists found a grape press, fermentation jars and cups dating to around 4000 BC."},
+    {"year": -3000, "title": "Wine for the pharaohs", "body": "Ancient Egyptians labeled wine jars with the vineyard, the year and the winemaker's name, a lot like a modern label. Jars of wine were buried with Tutankhamun."},
+    {"year": -500, "title": "Greeks watered their wine", "body": "Ancient Greeks mixed wine with water in a large bowl called a krater. Drinking it undiluted was considered barbaric. Their symposia were part drinking party, part philosophy seminar."},
+    {"year": 100, "title": "Rome spreads the vine", "body": "Roman legions and traders planted vineyards across their empire, including in what are now France, Spain, Germany and Portugal. Many of today's great regions started as Roman vineyards."},
+    {"year": 1100, "title": "Monks map Burgundy", "body": "Benedictine and Cistercian monks spent centuries noticing which plots made the best wine. Their careful observations became the basis for Burgundy's famous vineyard map."},
+    {"year": 1600, "title": "The English love affair with Bordeaux", "body": "England ruled Bordeaux for three centuries in the Middle Ages and kept drinking its light red wine, which they called \"claret\", long after."},
+    {"year": 1863, "title": "Phylloxera arrives in France", "body": "A tiny insect from North America began killing French vines. Over the next decades it destroyed most of Europe's vineyards. The fix was grafting European vines onto resistant American roots."},
+    {"year": 1970, "title": "The rise of the New World", "body": "From the 1970s, California, Australia, New Zealand, Chile and South Africa started making world-class wines, often labeled by grape rather than place. That made wine much easier for new drinkers."},
+    {"year": 2000, "title": "Screw caps go mainstream", "body": "In 2000, a group of Clare Valley Riesling producers in Australia switched to screw caps together to avoid cork taint. Within a few years most New Zealand wine followed."}
+  ]
+}

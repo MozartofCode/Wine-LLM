@@ -1,5 +1,7 @@
 "use client"
 
+import { VARIETY_TO_GRAPE_SLUG } from "@/content/learn/grapes"
+
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -219,6 +221,18 @@ export function ExploreContent() {
               </button>
             ))}
           </div>
+        )}
+
+        {varieties.length === 1 && VARIETY_TO_GRAPE_SLUG[varieties[0]] && (
+          <Link
+            href={`/learn/grapes/${VARIETY_TO_GRAPE_SLUG[varieties[0]]}`}
+            className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 hover:bg-amber-100"
+          >
+            <span>
+              New to <span className="font-semibold">{varieties[0]}</span>? Get to know it in a 3-minute lesson.
+            </span>
+            <span className="shrink-0 font-semibold">Learn →</span>
+          </Link>
         )}
 
         {isLoading ? (

@@ -4,7 +4,7 @@ import time
 from openai import OpenAI
 
 EMBED_MODEL = "text-embedding-3-small"
-EMBED_DIMENSIONS = 768
+EMBED_DIMENSIONS = 256  # must match vector(256) in db/schema.sql
 MAX_RETRIES = 5
 
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

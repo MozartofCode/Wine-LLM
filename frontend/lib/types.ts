@@ -18,3 +18,17 @@ export interface ChatApiResponse {
   text: string
   wines?: Wine[]
 }
+
+export interface BlindPuzzle {
+  number: number | null
+  wine_id: number
+  note: string
+  clues: {
+    price: number | null
+    points: number | null
+    country: string | null
+    province: string | null
+  }
+  answer: string
+  options: string[]
+}

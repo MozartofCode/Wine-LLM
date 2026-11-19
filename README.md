@@ -23,6 +23,24 @@ A quick walkthrough of the sommelier chat, Explorer, interactive map, and Compar
 - **"What's for Dinner?" Pairing Tool** (`/pair`): pick a dish or cuisine and get grounded pairings in a dedicated results layout (a "Sommelier's Note" card + a wine grid) — not a chat bubble.
 - **Wine of the Day**: a deterministic daily pick (same wine for everyone, all day), featured on the homepage.
 
+**Daily habit & games** (no account; progress lives in the browser)
+- **Today** (`/today`): a three-minute daily edition, the same for everyone: Blind Guess, a 60-second lesson, a word of the day, a wine-history fact, the daily pour and a weekly theme (plus a weekend bottle pick under $25). Streaks are tracked in `localStorage`.
+- **Blind Guess** (`/play/blind`): a real critic's note with every grape, place and producer word redacted (`API/games/blind.py`). Five guesses, a clue after each miss, and a shareable emoji result.
+- **Unlimited games** (`/play`): Higher or Lower (guess the pricier bottle), Grape Match (match 4 notes to 4 grapes) and Map Drop (find famous regions on the world map).
+- Daily content pools live in `frontend/content/daily/*.json` and are picked by UTC date (`frontend/lib/daily.ts`).
+
+**Wine Academy** (`/learn`)
+- Five tracks: **Taste Like a Pro** (8 lessons), **Grapes** (15 grape profiles with a flavor radar), **Regions** (8 lessons with a highlighted map), **How Wine Is Made** (six-step story plus a "Make Your Own Wine" simulator that finds the closest real wine via vector search, `POST /api/simulate`) and **Wine History** (a 12-era interactive timeline). Plus a searchable **Glossary**.
+- Every lesson ends with a 3-question check that earns a passport stamp, a "Taste it" strip of real wines, a "Find it near you" link and an "Ask the sommelier" handoff. Finishing a track unlocks a printable certificate.
+- Content lives as typed TypeScript in `frontend/content/learn/` (easy to edit and review; no CMS).
+
+**Near Me** (`/near`, `/near/communities`)
+- Wine bars, shops, wineries and restaurants from OpenStreetMap (Overpass, with mirror fallback and a 24h per-tile cache in `places_cache`), city search via Nominatim (rate-limited to 1 request/second), a Leaflet map, and a **Wine Crawl** planner (up to 4 stops, walking route, shareable URL).
+- **Wine communities**: clubs, classes, tastings and festivals. Anyone can submit one (honeypot, rate limit, optional Cloudflare Turnstile); submissions land as `pending` and appear only after you set `status = 'approved'` in Supabase. Submitter emails are never readable through the public API.
+
+**Passport** (`/passport`)
+- Lesson stamps, streaks, game high scores and wines you've marked "I tried this", grouped by country. A private transfer link (code in the URL hash, never sent to a server) moves progress to another device.
+
 **Browsing & filtering**
 - **Wine Explorer** (`/explore`): browse and filter all 111K+ wines with multi-select variety and country pickers (searchable for the 697 varieties), sort by price or rating, and removable filter chips. Deep-linkable (`/explore?variety=Sangiovese&country=Italy`).
 - **Country Explorer** (`/map`): an interactive world map — hover a country to see its name, click to jump straight into the Explorer filtered to that country.
@@ -40,18 +58,18 @@ This is a genuine retrieval-augmented generation pipeline, not a keyword search 
 **1. Offline ingestion (`API/scripts/ingest.py`)** — run once (or whenever the source data changes):
 - Loads `API/wine_metadata.csv` (the Kaggle `zynicide/wine-reviews` dataset), drops a stray index column, and null-guards missing fields.
 - For each wine, builds an embedding input string that folds in structured context, not just the raw tasting note: `"{variety} from {country}, {province}. {title}. {description}"`. This measurably improves recall for queries like "a bold Spanish red" versus embedding the description alone.
-- Batches these through **OpenAI's `text-embedding-3-small`**, truncated to **768 dimensions** via the API's native `dimensions` parameter (Matryoshka representation learning — this keeps the vector index compact and fast without materially hurting retrieval quality). Groq has no embeddings endpoint, so OpenAI is used solely for this step.
-- Bulk-upserts all 111,567 rows into a Postgres table (`wines`) hosted on **Supabase**, with the embedding stored in a native `vector(768)` column via the **pgvector** extension.
+- Batches these through **OpenAI's `text-embedding-3-small`**, truncated to **256 dimensions** via the API's native `dimensions` parameter (Matryoshka representation learning — this keeps the vector index compact and fast without materially hurting retrieval quality). Groq has no embeddings endpoint, so OpenAI is used solely for this step.
+- Bulk-upserts all 111,567 rows into a Postgres table (`wines`) hosted on **Supabase**, with the embedding stored in a native `vector(256)` column via the **pgvector** extension.
 - Also writes `API/rag/vocab.json` — the distinct list of varieties/countries in the dataset, used for cheap keyword-based filter extraction at query time (see below) without an extra LLM call, and to power the Explorer's filter pickers.
 
 **2. Query-time retrieval + generation (`API/rag/retriever.py`, `API/rag/generator.py`)** — on every chat message:
-- The user's message is embedded the same way (same model, same 768 dims) via `rag/embeddings.py`.
+- The user's message is embedded the same way (same model, same 256 dims) via `rag/embeddings.py`.
 - A lightweight regex/keyword pass (`extract_filters`) checks the message against the vocab list and a price-pattern regex (e.g. "under $20") to pull out optional structured filters — no LLM round-trip needed for this.
 - A single Postgres function, **`match_wines`**, runs a **hybrid query**: pgvector's `<->` (L2 distance) operator ranks all wines by embedding similarity, while any extracted `variety`/`country`/`price` filters are applied as ordinary `WHERE` clauses in the same query — semantic search and structured filtering in one round trip, not two separate systems bolted together.
 - The top matches are formatted into a numbered context block and passed to **Groq** (`llama-3.3-70b-versatile`) along with a system prompt that explicitly instructs the model to recommend **only** from the retrieved wines and to say so honestly if nothing fits — this is what makes it grounded rather than a model free-associating wine names it may have hallucinated.
 - The same retriever also powers non-chat surfaces: `list_wines()` backs the Explorer and Country Explorer (with multi-value `variety`/`country` filters and a `sort` param); `get_wines_by_ids()` powers the Comparison tool via a batch endpoint; `get_wine_of_the_day()` backs the daily pick (a date-seeded deterministic offset), using a `count()` + single-row `.range()` fetch rather than `ORDER BY random()`, which would be a full-table sort on 111K rows.
 
-**The vector index itself** is an **IVFFlat** index (`vector_l2_ops`, `lists = 100`) rather than HNSW. This was a deliberate choice made while debugging on Supabase's free tier: HNSW graph construction on 111K × 768-dim vectors routinely exceeded the platform's statement timeout during index builds, while IVFFlat (essentially k-means clustering into buckets) builds in well under a minute with a small `maintenance_work_mem` bump. At this dataset size, IVFFlat's recall is effectively equivalent to HNSW for this use case.
+**The vector index itself** is an **IVFFlat** index (`vector_l2_ops`, `lists = 100`) rather than HNSW. This was a deliberate choice made while debugging on Supabase's free tier: HNSW graph construction on 111K high-dimensional vectors routinely exceeded the platform's statement timeout during index builds, while IVFFlat (essentially k-means clustering into buckets) builds in well under a minute with a small `maintenance_work_mem` bump. At this dataset size, IVFFlat's recall is effectively equivalent to HNSW for this use case.
 
 One non-obvious bug worth documenting for anyone extending this: the first version of `match_wines` was a plain `language sql` function with `RETURNS TABLE(...)` and a parameterized `LIMIT`. Postgres's planner doesn't reliably inline SQL functions of that shape, which meant the ANN index optimization for `ORDER BY ... LIMIT` never kicked in *inside* the function — every call silently fell back to a brute-force distance scan over all 111K rows (**33 seconds** per query). The fix was rewriting it as a `plpgsql` function that builds the query with `EXECUTE format(...)`, baking the `LIMIT` in as a literal at execution time so the planner can use the index correctly. That dropped query time to **~70-150ms**.
 
@@ -60,7 +78,7 @@ One non-obvious bug worth documenting for anyone extending this: the first versi
 - **Frontend**: Next.js 15 (React 19), TypeScript, Tailwind, shadcn/ui
 - **Backend**: Flask (Python)
 - **LLM**: Groq (`llama-3.3-70b-versatile`) for chat/generation — free tier
-- **Embeddings**: OpenAI `text-embedding-3-small`, truncated to 768 dims (Groq has no embeddings API)
+- **Embeddings**: OpenAI `text-embedding-3-small`, truncated to 256 dims (Groq has no embeddings API)
 - **Vector store**: Supabase Postgres + `pgvector` (IVFFlat index, hybrid vector + structured-filter queries via a single RPC function)
 - **Client-side state**: URL query params (comparisons, quiz/pairing handoffs) — no auth, no server-side sessions
 
@@ -72,7 +90,7 @@ One non-obvious bug worth documenting for anyone extending this: the first versi
 - Node.js and npm
 - **Groq API key** — free, from [console.groq.com/keys](https://console.groq.com/keys)
 - **OpenAI API key** — used solely for embeddings, from [platform.openai.com](https://platform.openai.com/account/api-keys)
-- A Supabase project with the `wines` table, the `pgvector` extension enabled, and the `match_wines` / `truncate_wines` RPC functions (see `API/scripts/ingest.py` for the ingestion side and the schema migration for the table/function definitions)
+- A Supabase project with the `wines` table, the `pgvector` extension enabled, and the `match_wines` / `truncate_wines` RPC functions (apply `API/db/schema.sql` in the Supabase SQL editor first, then run ingestion, then build the index from the bottom of that file)
 
 ### Backend Setup
 
@@ -98,6 +116,8 @@ python app.py
 
 The backend runs on `http://localhost:5001`.
 
+Optional backend settings (see `API/.env.example`): `TRUST_PROXY`, `RATELIMIT_STORAGE_URI`, `TURNSTILE_SECRET`, `OVERPASS_URLS`, `OSM_USER_AGENT`.
+
 ### Frontend Setup
 
 ```bash
@@ -108,6 +128,8 @@ npm run dev
 ```
 
 The app runs on `http://localhost:3000`.
+
+Optional frontend settings (see `frontend/.env.example`): `NEXT_PUBLIC_SITE_URL` (sitemap/OG), `NEXT_PUBLIC_MAP_TILE_URL` and `NEXT_PUBLIC_MAP_TILE_ATTRIBUTION` (the default OpenStreetMap tiles are for light use only, so use a keyed provider in production), `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (cookieless analytics).
 
 ## 🎯 Usage
 

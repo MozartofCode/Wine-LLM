@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { MessageCircle, Compass } from "lucide-react"
+import { MessageCircle, Compass, EyeOff, GraduationCap, MapPin, ArrowRight } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Button } from "@/components/ui/button"
 import { WineStrip } from "@/components/wine-strip"
@@ -18,6 +18,30 @@ async function getFeaturedWines(): Promise<Wine[]> {
     return []
   }
 }
+
+const DOORS = [
+  {
+    href: "/play/blind",
+    icon: EyeOff,
+    kicker: "Daily puzzle",
+    title: "Play today's Blind Guess",
+    desc: "Name the grape from a real critic's note in five guesses. A new puzzle every day.",
+  },
+  {
+    href: "/learn",
+    icon: GraduationCap,
+    kicker: "Wine Academy",
+    title: "Start learning",
+    desc: "Bite-sized lessons on tasting, grapes, regions, winemaking and history, with a stamp for each one.",
+  },
+  {
+    href: "/near",
+    icon: MapPin,
+    kicker: "Near me",
+    title: "Find wine near you",
+    desc: "Wine bars, shops, wineries and local wine clubs. Plan a wine crawl and share it.",
+  },
+]
 
 export default async function Home() {
   const featured = await getFeaturedWines()
@@ -43,8 +67,8 @@ export default async function Home() {
             </h1>
 
             <p className="mt-4 text-lg text-rose-700/90 max-w-xl mx-auto text-balance">
-              Ask your sommelier for a recommendation grounded in real wine reviews,
-              or browse thousands of wines by variety, country, and price.
+              Learn wine in three minutes a day, play a daily blind tasting, find wine bars and clubs near you,
+              and ask a sommelier grounded in 111,000 real reviews.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -78,6 +102,28 @@ export default async function Home() {
               <span className="text-rose-300">•</span>
               <span>Free to use</span>
             </div>
+          </div>
+        </section>
+
+        <section className="container mx-auto max-w-5xl px-4 pb-12">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {DOORS.map(({ href, icon: Icon, kicker, title, desc }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex flex-col rounded-3xl border border-rose-100 bg-white/80 p-6 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-900 text-white">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-rose-500">{kicker}</p>
+                <h2 className="mt-1 text-lg font-bold text-rose-950 group-hover:text-rose-700">{title}</h2>
+                <p className="mt-1 text-sm text-gray-600">{desc}</p>
+                <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-rose-700">
+                  Go <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
 
