@@ -69,17 +69,27 @@ export default async function LessonPage({ params }: { params: Promise<{ track: 
           </div>
         )}
 
-        <article className="mt-8 flex flex-col gap-7">
+        <article className="mt-10 flex max-w-prose flex-col gap-10">
           {lesson.sections.map((s, i) => (
             <section key={i}>
               {s.heading && <h2 className="text-xl font-bold text-rose-950">{s.heading}</h2>}
               {s.body.map((p, j) => (
-                <p key={j} className="mt-2 leading-relaxed text-gray-800">
+                <p key={j} className="mt-3 text-[17px] leading-8 text-gray-700">
                   {p}
                 </p>
               ))}
+              {s.points && (
+                <dl className="mt-4 divide-y divide-rose-100 overflow-hidden rounded-2xl border border-rose-100 bg-white">
+                  {s.points.map((pt) => (
+                    <div key={pt.label} className="grid gap-0.5 px-4 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
+                      <dt className="text-sm font-semibold text-rose-900">{pt.label}</dt>
+                      <dd className="text-sm leading-6 text-gray-700">{pt.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               {s.tip && (
-                <p className="mt-3 flex gap-2 rounded-2xl bg-amber-50 p-3.5 text-sm text-amber-950">
+                <p className="mt-4 flex gap-2.5 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
                   <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                   {s.tip}
                 </p>

@@ -31,6 +31,13 @@ create index if not exists wines_country_idx on public.wines (country);
 create index if not exists wines_points_idx  on public.wines (points desc);
 create index if not exists wines_price_idx   on public.wines (price);
 
+-- Index-only counts/offsets for the games (Blind Guess, Grape Match, Higher or
+-- Lower). Without these the counts read the whole table and exceed the public
+-- role's ~3s statement timeout. Run `vacuum (analyze) public.wines;` after ingest
+-- so the planner can use index-only scans.
+create index if not exists wines_variety_points_price_id_idx on public.wines (variety, points, price, id);
+create index if not exists wines_priced_scored_id_idx on public.wines (id) where price is not null and points is not null;
+
 -- Public site reads only. Writes happen with the service-role key (ingest),
 -- which bypasses RLS, so there are deliberately no insert/update policies.
 alter table public.wines enable row level security;
@@ -169,5 +176,5 @@ revoke all on public.places_cache from anon, authenticated;
 --   set maintenance_work_mem = '128MB';
 --   create index if not exists wines_embedding_ivfflat
 --     on public.wines using ivfflat (embedding extensions.vector_l2_ops) with (lists = 100);
---   analyze public.wines;
+--   vacuum (analyze) public.wines;
 -- ---------------------------------------------------------------------------

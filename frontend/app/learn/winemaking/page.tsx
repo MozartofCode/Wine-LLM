@@ -2,10 +2,11 @@ import Link from "next/link"
 import { Nav } from "@/components/nav"
 import { LessonActions } from "@/components/learn/lesson-actions"
 import { LessonQuiz } from "@/components/learn/lesson-quiz"
+import { MakingSteps } from "@/components/learn/making-steps"
 import { Certificate, TrackProgressBar } from "@/components/learn/track-progress"
 import { WineSimulator } from "@/components/learn/wine-simulator"
 import { getTrack, lessonStamp, trackStampIds } from "@/content/learn"
-import { MAKING_QUIZ, MAKING_STEPS } from "@/content/learn/winemaking"
+import { MAKING_QUIZ } from "@/content/learn/winemaking"
 
 export const metadata = {
   title: "How Wine Is Made | Wine Academy",
@@ -32,28 +33,9 @@ export default function WinemakingPage() {
           <TrackProgressBar stampIds={trackStampIds("winemaking")} />
         </div>
 
-        <ol className="relative mt-10 flex flex-col gap-6 border-l-2 border-dashed border-rose-200 pl-6 sm:pl-10">
-          {MAKING_STEPS.map((s, i) => (
-            <li key={s.id} className="relative">
-              <span
-                className="absolute -left-[2.35rem] flex h-10 w-10 items-center justify-center rounded-full border-2 border-rose-200 bg-white text-lg sm:-left-[3.6rem]"
-                aria-hidden
-              >
-                {s.emoji}
-              </span>
-              <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">
-                  Step {i + 1} · {s.season}
-                </p>
-                <h2 className="mt-1 text-xl font-bold text-rose-950">{s.title}</h2>
-                <p className="mt-2 leading-relaxed text-gray-800">{s.body}</p>
-                <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-sm font-medium text-amber-950">
-                  The winemaker’s choice: {s.decision}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <div className="mt-8">
+          <MakingSteps />
+        </div>
 
         <div className="mt-10">
           <LessonQuiz questions={MAKING_QUIZ} stampId={lessonStamp("winemaking", "vine-to-bottle")} />

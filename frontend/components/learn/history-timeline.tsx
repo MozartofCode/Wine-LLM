@@ -41,7 +41,7 @@ export function HistoryTimeline() {
         <h2 className="mt-1 text-2xl font-bold text-rose-950">
           <span aria-hidden>{era.emoji}</span> {era.title}
         </h2>
-        <p className="mt-3 leading-relaxed text-gray-800">{era.story}</p>
+        <p className="mt-3 max-w-prose text-[17px] leading-8 text-gray-700">{era.story}</p>
         <Link
           href={`/explore?${explore}`}
           className="mt-5 inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-200"

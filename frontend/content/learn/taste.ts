@@ -148,7 +148,11 @@ export const TASTE_LESSONS: Lesson[] = [
         heading: "Body: the weight",
         body: [
           "Body is how heavy the wine feels: skim milk, whole milk or cream. More alcohol, sugar and extract means fuller body.",
-          "Light-bodied: Pinot Grigio, Gamay. Medium: Merlot, Sangiovese. Full: Cabernet, Syrah, oaked Chardonnay.",
+        ],
+        points: [
+          { label: "Light", text: "Pinot Grigio, Gamay" },
+          { label: "Medium", text: "Merlot, Sangiovese" },
+          { label: "Full", text: "Cabernet, Syrah, oaked Chardonnay" },
         ],
         tip: "Rinse a sip of water around your mouth, then a sip of wine. The difference in weight is body.",
       },
@@ -193,14 +197,23 @@ export const TASTE_LESSONS: Lesson[] = [
       {
         heading: "Place vs grape",
         body: [
-          "European (Old World) labels usually name the place, and the place implies the grape: Chablis is Chardonnay, Sancerre is Sauvignon Blanc, Barolo is Nebbiolo, Rioja is mostly Tempranillo.",
-          "New World labels (US, Australia, Chile and so on) usually name the grape: \"Napa Valley Cabernet Sauvignon\".",
+          "European labels usually name the place, and the place implies the grape. New World labels (US, Australia, Chile) usually name the grape.",
+        ],
+        points: [
+          { label: "Chablis", text: "Chardonnay" },
+          { label: "Sancerre", text: "Sauvignon Blanc" },
+          { label: "Barolo", text: "Nebbiolo" },
+          { label: "Rioja", text: "Mostly Tempranillo" },
         ],
       },
       {
         heading: "Useful words",
-        body: [
-          "Reserva / Riserva: aged longer before release (the exact rules depend on the region). Grand Cru / Premier Cru: top-ranked vineyards in places like Burgundy. Brut: dry sparkling wine. Vieilles vignes / old vines: older, often more concentrated vines (no legal definition).",
+        body: [],
+        points: [
+          { label: "Reserva / Riserva", text: "Aged longer before release (rules vary by region)" },
+          { label: "Grand Cru / Premier Cru", text: "Top-ranked vineyards, e.g. in Burgundy" },
+          { label: "Brut", text: "Dry sparkling wine" },
+          { label: "Old vines", text: "Older, often more concentrated vines (no legal definition)" },
         ],
         tip: "\"Reserve\" on an American label has no legal meaning. It's whatever the winery wants it to mean.",
       },
@@ -240,9 +253,13 @@ export const TASTE_LESSONS: Lesson[] = [
     sections: [
       {
         heading: "Temperature cheat sheet",
-        body: [
-          "Sparkling: well chilled, 6–10°C (43–50°F). Crisp whites and rosé: 8–12°C (46–54°F). Rich whites like oaked Chardonnay: 10–13°C (50–55°F). Light reds like Pinot Noir and Gamay: 12–15°C (54–59°F). Full reds: 15–18°C (59–65°F).",
-          "Too warm and a red tastes boozy and soupy. Too cold and a white tastes of nothing.",
+        body: ["Too warm and a red tastes boozy and soupy. Too cold and a white tastes of nothing."],
+        points: [
+          { label: "Sparkling", text: "6–10°C (43–50°F)" },
+          { label: "Crisp whites & rosé", text: "8–12°C (46–54°F)" },
+          { label: "Rich whites", text: "10–13°C (50–55°F)" },
+          { label: "Light reds", text: "12–15°C (54–59°F)" },
+          { label: "Full reds", text: "15–18°C (59–65°F)" },
         ],
         tip: "The 20/20 rule: whites out of the fridge 20 minutes before serving, reds in the fridge for 20 minutes.",
       },

@@ -11,6 +11,8 @@ export interface QuizQuestion {
 export interface LessonSection {
   heading?: string
   body: string[]
+  /** Short labeled facts, shown as a scannable list instead of a crammed paragraph. */
+  points?: { label: string; text: string }[]
   tip?: string
 }
 

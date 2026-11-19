@@ -140,11 +140,17 @@ def get_daily_blind(today: date | None = None) -> dict | None:
         return None
 
     offset = int(hashlib.sha256(f"blind:{key}".encode()).hexdigest(), 16) % total
-    # Walk forward a few rows if the note is too short to be a fair puzzle.
-    resp = _guessable_query(client, PUBLIC_COLUMNS).order("id").range(offset, offset + 9).execute()
-    rows = resp.data or []
+    # Find ids first (index-only, cheap), then fetch only those rows: skipping
+    # through full rows to a deep offset is too slow for the public role's timeout.
+    id_rows = _guessable_query(client, "id").order("id").range(offset, offset + 9).execute().data or []
+    ids = [r["id"] for r in id_rows]
+    if not ids:
+        return None
+    by_id = {w["id"]: w for w in client.table("wines").select(PUBLIC_COLUMNS).in_("id", ids).execute().data or []}
+    rows = [by_id[i] for i in ids if i in by_id]
     if not rows:
         return None
+    # Walk forward a few rows if the note is too short to be a fair puzzle.
     wine = next((w for w in rows if len(w.get("description") or "") >= 150), rows[0])
 
     number = (today - LAUNCH_DATE).days + 1
@@ -159,11 +165,15 @@ def _random_rows(client, count: int, query_factory) -> list[dict]:
     if total == 0:
         return []
     offsets = random.sample(range(total), min(count, total))
-    rows = []
+    ids = []
     for offset in offsets:
-        resp = query_factory(PUBLIC_COLUMNS, None).order("id").range(offset, offset).execute()
-        rows.extend(resp.data or [])
-    return rows
+        # id-only lookups use an index; full rows are fetched once, below.
+        resp = query_factory("id", None).order("id").range(offset, offset).execute()
+        ids.extend(r["id"] for r in resp.data or [])
+    if not ids:
+        return []
+    by_id = {w["id"]: w for w in client.table("wines").select(PUBLIC_COLUMNS).in_("id", ids).execute().data or []}
+    return [by_id[i] for i in ids if i in by_id]
 
 
 def get_random_wines(count: int = 10) -> list[dict]:

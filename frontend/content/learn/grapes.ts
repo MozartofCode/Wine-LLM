@@ -366,13 +366,16 @@ export const GRAPE_LESSONS: Lesson[] = GRAPES.map((g) => ({
   profile: g.profile,
   mapCountries: g.mapCountries,
   sections: [
-    { body: [g.story] },
     {
-      heading: "What it tastes like",
-      body: [`Look for ${g.aromas.slice(0, -1).join(", ")} and ${g.aromas[g.aromas.length - 1]}.`],
+      heading: "At a glance",
+      body: [],
+      points: [
+        { label: "Tastes like", text: g.aromas.join(", ") },
+        { label: "Grows in", text: g.places },
+        { label: "Eat it with", text: g.food },
+      ],
     },
-    { heading: "Where it grows", body: [g.places + "."] },
-    { heading: "Eat it with", body: [g.food + "."], tip: g.funFact },
+    { heading: "The story", body: [g.story], tip: g.funFact },
   ],
   quiz: buildQuiz(g),
   tasteIt: { variety: g.variety, label: `Top-rated ${g.name.split(" /")[0]} from the catalog` },

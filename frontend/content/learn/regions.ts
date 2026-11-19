@@ -18,8 +18,13 @@ export const REGION_LESSONS: Lesson[] = [
       },
       {
         heading: "The big five",
-        body: [
-          "Bordeaux: blends of Cabernet Sauvignon and Merlot, plus sweet Sauternes. Burgundy: Pinot Noir and Chardonnay from tiny, mapped vineyard plots. Champagne: sparkling wine from Chardonnay, Pinot Noir and Meunier. Rhône: peppery Syrah in the north, Grenache blends in the south. Loire: crisp Sauvignon Blanc, Chenin Blanc and Cabernet Franc.",
+        body: [],
+        points: [
+          { label: "Bordeaux", text: "Cabernet Sauvignon and Merlot blends, plus sweet Sauternes" },
+          { label: "Burgundy", text: "Pinot Noir and Chardonnay from tiny, mapped plots" },
+          { label: "Champagne", text: "Sparkling wine from Chardonnay, Pinot Noir and Meunier" },
+          { label: "Rhône", text: "Peppery Syrah in the north, Grenache blends in the south" },
+          { label: "Loire", text: "Crisp Sauvignon Blanc, Chenin Blanc and Cabernet Franc" },
         ],
       },
       {
@@ -71,8 +76,12 @@ export const REGION_LESSONS: Lesson[] = [
       },
       {
         heading: "Where to start",
-        body: [
-          "Piedmont: Nebbiolo (Barolo, Barbaresco), plus everyday Barbera and Dolcetto. Tuscany: Sangiovese (Chianti Classico, Brunello di Montalcino) and the \"Super Tuscan\" blends. Veneto: Prosecco, Amarone and Soave. Sicily: Nero d'Avola and the volcanic wines of Mount Etna.",
+        body: [],
+        points: [
+          { label: "Piedmont", text: "Nebbiolo (Barolo, Barbaresco), plus everyday Barbera and Dolcetto" },
+          { label: "Tuscany", text: "Sangiovese (Chianti Classico, Brunello) and \"Super Tuscan\" blends" },
+          { label: "Veneto", text: "Prosecco, Amarone and Soave" },
+          { label: "Sicily", text: "Nero d'Avola and the volcanic wines of Mount Etna" },
         ],
         tip: "On labels, DOCG is Italy's highest quality category, but plenty of great wines sit outside it.",
       },
@@ -118,8 +127,13 @@ export const REGION_LESSONS: Lesson[] = [
       },
       {
         heading: "Key regions",
-        body: [
-          "Rioja and Ribera del Duero: Tempranillo, often oak-aged. Priorat: intense Garnacha and Cariñena from steep slate slopes. Rías Baixas: zesty Albariño, made for seafood. Cava: traditional-method sparkling wine, mostly from Catalonia. Jerez: Sherry, from bone-dry Fino to sweet Pedro Ximénez.",
+        body: [],
+        points: [
+          { label: "Rioja & Ribera", text: "Tempranillo, often oak-aged" },
+          { label: "Priorat", text: "Intense Garnacha from steep slate slopes" },
+          { label: "Rías Baixas", text: "Zesty Albariño, made for seafood" },
+          { label: "Cava", text: "Champagne-method sparkling, mostly from Catalonia" },
+          { label: "Jerez", text: "Sherry, from bone-dry Fino to sweet Pedro Ximénez" },
         ],
         tip: "Crianza, Reserva and Gran Reserva tell you how long a Rioja aged before release.",
       },
@@ -165,8 +179,13 @@ export const REGION_LESSONS: Lesson[] = [
       },
       {
         heading: "Key regions",
-        body: [
-          "Napa Valley: world-class Cabernet Sauvignon. Sonoma: everything from cool-climate Pinot Noir and Chardonnay to old-vine Zinfandel. Willamette Valley, Oregon: elegant Pinot Noir. Washington State: Cabernet, Merlot and Syrah. New York's Finger Lakes: crisp Riesling.",
+        body: [],
+        points: [
+          { label: "Napa Valley", text: "World-class Cabernet Sauvignon" },
+          { label: "Sonoma", text: "Cool-climate Pinot Noir and Chardonnay, old-vine Zinfandel" },
+          { label: "Willamette, Oregon", text: "Elegant Pinot Noir" },
+          { label: "Washington State", text: "Cabernet, Merlot and Syrah" },
+          { label: "Finger Lakes, NY", text: "Crisp Riesling" },
         ],
         tip: "AVA on a US label means American Viticultural Area, a defined growing region.",
       },
@@ -357,8 +376,12 @@ export const REGION_LESSONS: Lesson[] = [
       },
       {
         heading: "Key styles",
-        body: [
-          "Douro: the steep, terraced valley where Port is made. Port is fortified with grape spirit mid-fermentation, so it stays sweet and strong. The same valley now makes excellent dry reds from Touriga Nacional and Tinta Roriz (Tempranillo). Vinho Verde: light, zippy, often slightly fizzy whites. Madeira: a fortified wine heated as it ages, which makes it nearly indestructible.",
+        body: [],
+        points: [
+          { label: "Port", text: "Sweet and strong: grape spirit is added mid-fermentation" },
+          { label: "Douro reds", text: "Excellent dry reds from Touriga Nacional and Tinta Roriz" },
+          { label: "Vinho Verde", text: "Light, zippy, often slightly fizzy whites" },
+          { label: "Madeira", text: "Fortified and heated as it ages, so it's nearly indestructible" },
         ],
         tip: "\"Portuguese Red\" is one of the best-value categories in the catalog. Try one.",
       },
