@@ -66,7 +66,7 @@ This is a genuine retrieval-augmented generation pipeline, not a keyword search 
 - The user's message is embedded the same way (same model, same 256 dims) via `rag/embeddings.py`.
 - A lightweight regex/keyword pass (`extract_filters`) checks the message against the vocab list and a price-pattern regex (e.g. "under $20") to pull out optional structured filters — no LLM round-trip needed for this.
 - A single Postgres function, **`match_wines`**, runs a **hybrid query**: pgvector's `<->` (L2 distance) operator ranks all wines by embedding similarity, while any extracted `variety`/`country`/`price` filters are applied as ordinary `WHERE` clauses in the same query — semantic search and structured filtering in one round trip, not two separate systems bolted together.
-- The top matches are formatted into a numbered context block and passed to **Groq** (`llama-3.3-70b-versatile`) along with a system prompt that explicitly instructs the model to recommend **only** from the retrieved wines and to say so honestly if nothing fits — this is what makes it grounded rather than a model free-associating wine names it may have hallucinated.
+- The top matches are formatted into a numbered context block and passed to **Groq** (`openai/gpt-oss-120b` by default, configurable with `GROQ_MODEL`) along with a system prompt that explicitly instructs the model to recommend **only** from the retrieved wines and to say so honestly if nothing fits — this is what makes it grounded rather than a model free-associating wine names it may have hallucinated.
 - The same retriever also powers non-chat surfaces: `list_wines()` backs the Explorer and Country Explorer (with multi-value `variety`/`country` filters and a `sort` param); `get_wines_by_ids()` powers the Comparison tool via a batch endpoint; `get_wine_of_the_day()` backs the daily pick (a date-seeded deterministic offset), using a `count()` + single-row `.range()` fetch rather than `ORDER BY random()`, which would be a full-table sort on 111K rows.
 
 **The vector index itself** is an **IVFFlat** index (`vector_l2_ops`, `lists = 100`) rather than HNSW. This was a deliberate choice made while debugging on Supabase's free tier: HNSW graph construction on 111K high-dimensional vectors routinely exceeded the platform's statement timeout during index builds, while IVFFlat (essentially k-means clustering into buckets) builds in well under a minute with a small `maintenance_work_mem` bump. At this dataset size, IVFFlat's recall is effectively equivalent to HNSW for this use case.
@@ -77,7 +77,7 @@ One non-obvious bug worth documenting for anyone extending this: the first versi
 
 - **Frontend**: Next.js 15 (React 19), TypeScript, Tailwind, shadcn/ui
 - **Backend**: Flask (Python)
-- **LLM**: Groq (`llama-3.3-70b-versatile`) for chat/generation — free tier
+- **LLM**: Groq (`openai/gpt-oss-120b`, set via `GROQ_MODEL`) for chat/generation — free tier
 - **Embeddings**: OpenAI `text-embedding-3-small`, truncated to 256 dims (Groq has no embeddings API)
 - **Vector store**: Supabase Postgres + `pgvector` (IVFFlat index, hybrid vector + structured-filter queries via a single RPC function)
 - **Client-side state**: URL query params (comparisons, quiz/pairing handoffs) — no auth, no server-side sessions
