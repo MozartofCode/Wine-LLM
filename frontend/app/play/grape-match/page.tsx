@@ -102,7 +102,7 @@ export default function GrapeMatchPage() {
       {phase === "loading" && <div className="h-96 animate-pulse rounded-3xl bg-white/60" />}
       {phase === "error" && (
         <div className="rounded-3xl bg-white p-8 text-center text-rose-800">
-          Couldn't pour this round.{" "}
+          Couldn’t pour this round.{" "}
           <button className="underline" onClick={loadRound}>
             Try again
           </button>
@@ -123,7 +123,7 @@ export default function GrapeMatchPage() {
               <RotateCcw className="h-4 w-4" /> Play again
             </button>
             <Link href="/play/blind" className="rounded-full border border-rose-300 px-5 py-2.5 font-medium text-rose-800 hover:bg-rose-50">
-              Try today's Blind Guess
+              Try today’s Blind Guess
             </Link>
           </div>
         </div>

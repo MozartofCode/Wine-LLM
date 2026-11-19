@@ -37,7 +37,16 @@ from rag.retriever import (  # noqa: E402
 )
 
 app = Flask(__name__)
-CORS(app)
+
+# Only the site itself may call the API from a browser. Server-side requests
+# (Next.js rendering) aren't subject to CORS. Comma-separated list, e.g.
+# CORS_ORIGINS=https://pourdecisions.example,https://www.pourdecisions.example
+CORS_ORIGINS = [
+    o.strip()
+    for o in (os.getenv("CORS_ORIGINS") or "http://localhost:3000,http://127.0.0.1:3000").split(",")
+    if o.strip()
+]
+CORS(app, origins=CORS_ORIGINS)
 log = logging.getLogger(__name__)
 
 # Behind a hosting proxy (Render/Fly/Vercel rewrites) the client IP arrives in

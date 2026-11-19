@@ -21,7 +21,7 @@ export default async function BlindPage() {
           {puzzle ? (
             <BlindGuess puzzle={puzzle} />
           ) : (
-            <p className="py-10 text-center text-rose-800">Today's puzzle isn't ready yet. Check back in a few minutes.</p>
+            <p className="py-10 text-center text-rose-800">Today’s puzzle isn’t ready yet. Check back in a few minutes.</p>
           )}
         </div>
         <details className="mt-6 rounded-2xl bg-white/60 p-4 text-sm text-rose-900">

@@ -72,9 +72,9 @@ export function SubmitCommunity() {
     return (
       <div className="rounded-3xl bg-emerald-50 p-6 text-emerald-950" aria-live="polite">
         <p className="flex items-center gap-2 text-lg font-bold">
-          <Check className="h-5 w-5" /> Thanks! We'll take a look.
+          <Check className="h-5 w-5" /> Thanks! We’ll take a look.
         </p>
-        <p className="mt-1 text-sm">New communities appear on the site once they've been reviewed, usually within a few days.</p>
+        <p className="mt-1 text-sm">New communities appear on the site once they’ve been reviewed, usually within a few days.</p>
       </div>
     )
   }

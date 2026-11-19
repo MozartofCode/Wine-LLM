@@ -54,7 +54,7 @@ export function CommunitiesContent() {
       </Link>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-rose-950 sm:text-4xl">Wine communities</h1>
       <p className="mt-1 max-w-2xl text-rose-800/80">
-        Clubs, classes, tastings, festivals and supper clubs. Wine is better with people. Know one we're missing? Add it below.
+        Clubs, classes, tastings, festivals and supper clubs. Wine is better with people. Know one we’re missing? Add it below.
       </p>
 
       <div className="mt-6">

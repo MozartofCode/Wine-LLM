@@ -98,7 +98,7 @@ export default function HigherLowerPage() {
       {phase === "loading" && <div className="h-80 animate-pulse rounded-3xl bg-white/60" />}
       {phase === "error" && (
         <div className="rounded-3xl bg-white p-8 text-center text-rose-800">
-          Couldn't pour the wines right now.{" "}
+          Couldn’t pour the wines right now.{" "}
           <button className="underline" onClick={start}>
             Try again
           </button>
@@ -141,7 +141,7 @@ export default function HigherLowerPage() {
               <div className="w-full rounded-3xl bg-white p-6 text-center shadow-sm">
                 <p className="text-lg font-bold text-rose-950">{newBest ? `New best: ${score}!` : `Streak over at ${score}.`}</p>
                 <p className="mt-1 text-sm text-gray-600">
-                  Price isn't quality: critics' scores and prices often disagree. That's where bargains hide.
+                  Price isn’t quality: critics’ scores and prices often disagree. That’s where bargains hide.
                 </p>
                 <div className="mt-4 flex flex-wrap justify-center gap-2">
                   <button

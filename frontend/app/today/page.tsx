@@ -56,7 +56,7 @@ export default async function TodayPage() {
 
         <section className="mt-6 flex flex-col gap-3 rounded-3xl bg-rose-900 p-5 text-rose-50 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-rose-300">This week's theme</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-rose-300">This week’s theme</p>
             <p className="mt-1 text-xl font-bold">
               {theme.emoji} {theme.name}
             </p>
@@ -76,7 +76,7 @@ export default async function TodayPage() {
               <BlindGuess puzzle={puzzle} compact />
             ) : (
               <div className="py-10 text-center text-rose-800">
-                <p className="font-semibold">Today's Blind Guess is still being poured.</p>
+                <p className="font-semibold">Today’s Blind Guess is still being poured.</p>
                 <p className="mt-1 text-sm text-rose-700/80">Check back in a few minutes.</p>
               </div>
             )}

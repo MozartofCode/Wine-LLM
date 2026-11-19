@@ -45,7 +45,7 @@ export function AgeGate() {
               Come back a little later
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              This site is about alcohol, so it's only for people of legal drinking age where they live.
+              This site is about alcohol, so it’s only for people of legal drinking age where they live.
             </p>
           </>
         ) : (

@@ -51,7 +51,7 @@ export default function LearnPage() {
           >
             <BookA className="h-8 w-8 text-rose-700" />
             <h2 className="mt-3 text-xl font-bold text-rose-950 group-hover:text-rose-700">Glossary</h2>
-            <p className="mt-1 text-sm text-gray-600">Every wine word you'll run into, with pronunciation.</p>
+            <p className="mt-1 text-sm text-gray-600">Every wine word you’ll run into, with pronunciation.</p>
             <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-rose-700">
               Browse <ArrowRight className="h-4 w-4" />
             </span>

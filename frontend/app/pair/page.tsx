@@ -43,8 +43,8 @@ export default function PairPage() {
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)
       const data: ChatApiResponse = await res.json()
       setResult(data)
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.")
+    } catch (err) {
+      setError((err instanceof Error && err.message) || "Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -62,8 +62,8 @@ export default function PairPage() {
 
       <main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-rose-900">What's for Dinner?</h1>
-          <p className="mt-2 text-rose-700">Tell us the dish, and we'll find wines that pair well with it.</p>
+          <h1 className="text-3xl font-bold text-rose-900">What’s for Dinner?</h1>
+          <p className="mt-2 text-rose-700">Tell us the dish, and we’ll find wines that pair well with it.</p>
         </div>
 
         {!result && !isLoading && (
@@ -127,7 +127,7 @@ export default function PairPage() {
         {result && (
           <div className="mt-2">
             <div className="rounded-2xl border border-rose-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-semibold text-rose-500 uppercase tracking-wide mb-2">Sommelier's Note</p>
+              <p className="text-xs font-semibold text-rose-500 uppercase tracking-wide mb-2">Sommelier’s Note</p>
               <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">{result.text}</p>
             </div>
 

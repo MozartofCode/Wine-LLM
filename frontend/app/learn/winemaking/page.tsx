@@ -48,7 +48,7 @@ export default function WinemakingPage() {
                 <h2 className="mt-1 text-xl font-bold text-rose-950">{s.title}</h2>
                 <p className="mt-2 leading-relaxed text-gray-800">{s.body}</p>
                 <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-sm font-medium text-amber-950">
-                  The winemaker's choice: {s.decision}
+                  The winemaker’s choice: {s.decision}
                 </p>
               </div>
             </li>

@@ -81,7 +81,7 @@ export function PassportContent() {
         </div>
       )}
       {importState === "done" && <p className="mt-6 rounded-2xl bg-emerald-50 p-4 text-sm font-medium text-emerald-900">Progress imported. Welcome back!</p>}
-      {importState === "bad" && <p className="mt-6 rounded-2xl bg-rose-50 p-4 text-sm font-medium text-rose-900">That link didn't work. Copy it again from your other device.</p>}
+      {importState === "bad" && <p className="mt-6 rounded-2xl bg-rose-50 p-4 text-sm font-medium text-rose-900">That link didn’t work. Copy it again from your other device.</p>}
 
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Your stats">
         {[
@@ -143,11 +143,11 @@ export function PassportContent() {
 
       <section className="mt-10" aria-labelledby="tried-title">
         <h2 id="tried-title" className="text-xl font-bold text-rose-950">
-          Wines you've tried
+          Wines you’ve tried
         </h2>
         {progress.tried.length === 0 ? (
           <p className="mt-2 rounded-2xl bg-white/70 p-4 text-sm text-rose-800">
-            Tap "I tried this" on any wine page to stamp it here. Start with today's{" "}
+            Tap &quot;I tried this&quot; on any wine page to stamp it here. Start with today’s{" "}
             <Link href="/today" className="font-semibold underline">
               daily pour
             </Link>

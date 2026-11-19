@@ -13,7 +13,7 @@ export default function PassportPage() {
       <Nav />
       <main className="container mx-auto max-w-4xl px-4 py-10">
         <p className="text-sm font-semibold text-rose-600">Your wine passport</p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-rose-950 sm:text-4xl">Everything you've learned and tasted</h1>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-rose-950 sm:text-4xl">Everything you’ve learned and tasted</h1>
         <p className="mt-1 text-rose-800/80">Saved only in this browser. Nobody else can see it.</p>
         <PassportContent />
       </main>

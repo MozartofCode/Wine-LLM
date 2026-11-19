@@ -126,7 +126,7 @@ export function WineSimulator() {
           <h2 id="sim-title" className="text-xl font-bold text-rose-950">
             Make your own wine
           </h2>
-          <p className="text-sm text-rose-800/80">Make the winemaker's choices, then meet the real wine closest to yours.</p>
+          <p className="text-sm text-rose-800/80">Make the winemaker’s choices, then meet the real wine closest to yours.</p>
         </div>
       </div>
 
@@ -153,7 +153,7 @@ export function WineSimulator() {
           className="inline-flex items-center gap-2 rounded-full bg-rose-800 px-6 py-3 font-semibold text-white hover:bg-rose-900 disabled:opacity-60"
         >
           {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
-          Find my wine's real-world twin
+          Find my wine’s real-world twin
         </button>
         {status === "error" && (
           <p className="text-sm text-rose-800">The cellar is busy right now. Try again in a moment.</p>

@@ -257,7 +257,7 @@ export function NearContent() {
                       {copied ? "Link copied" : "Share crawl"}
                     </button>
                   </div>
-                  <p className="mt-3 text-xs text-rose-200">Pace yourself: share tastes, drink water between stops, and don't drive.</p>
+                  <p className="mt-3 text-xs text-rose-200">Pace yourself: share tastes, drink water between stops, and don’t drive.</p>
                 </section>
               )}
 

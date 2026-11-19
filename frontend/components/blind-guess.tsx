@@ -77,7 +77,7 @@ export function BlindGuess({ puzzle, compact = false }: { puzzle: BlindPuzzle; c
             <h2 className="text-lg font-bold leading-tight text-rose-950">
               Blind Guess {puzzle.number != null && <span className="text-rose-500">#{puzzle.number}</span>}
             </h2>
-            <p className="text-xs text-rose-700/80">Name the grape from a real critic's note.</p>
+            <p className="text-xs text-rose-700/80">Name the grape from a real critic’s note.</p>
           </div>
         </div>
         <div className="flex gap-1" aria-label={`${result.guesses.length} of ${MAX_GUESSES} guesses used`}>
